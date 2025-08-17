@@ -1,0 +1,12 @@
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.csproj.user
+*.vbproj.user
