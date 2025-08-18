@@ -16,6 +16,9 @@ namespace HealthMonitoringService
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
+        private JobServer jobServer = new JobServer();
+
+        
         public override void Run()
         {
             Trace.TraceInformation("HealthMonitoringService is running");
@@ -43,6 +46,8 @@ namespace HealthMonitoringService
 
             bool result = base.OnStart();
 
+            jobServer.Open();
+
             Trace.TraceInformation("HealthMonitoringService has been started");
 
             return result;
@@ -56,6 +61,8 @@ namespace HealthMonitoringService
             this.runCompleteEvent.WaitOne();
 
             base.OnStop();
+
+            jobServer.Close();
 
             Trace.TraceInformation("HealthMonitoringService has stopped");
         }
