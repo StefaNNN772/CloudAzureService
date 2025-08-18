@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HealthMonitoringContracts
 {
     [ServiceContract]
-    public interface IJob
+    public interface IHealthMonitoring
     {
         [OperationContract]
         bool CheckServices();

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace NotificationContracts
 {
     [ServiceContract]
-    public interface IJob
+    public interface INotifification
     {
         [OperationContract]
         void SendEmails(List<string> emails, string emailBody);

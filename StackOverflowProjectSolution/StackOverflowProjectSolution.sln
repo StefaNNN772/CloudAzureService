@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthStatusService", "Heal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminToolsConsoleApp", "AdminToolsConsoleApp\AdminToolsConsoleApp.csproj", "{EAFAB260-BECC-44B4-AA75-A335F310F023}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthMonitoringContracts", "HealthMonitoringContracts\HealthMonitoringContracts.csproj", "{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationContracts", "NotificationContracts\NotificationContracts.csproj", "{96575019-3164-4843-A070-DA9F9597C09E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{EAFAB260-BECC-44B4-AA75-A335F310F023}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAFAB260-BECC-44B4-AA75-A335F310F023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFAB260-BECC-44B4-AA75-A335F310F023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96575019-3164-4843-A070-DA9F9597C09E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96575019-3164-4843-A070-DA9F9597C09E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96575019-3164-4843-A070-DA9F9597C09E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96575019-3164-4843-A070-DA9F9597C09E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

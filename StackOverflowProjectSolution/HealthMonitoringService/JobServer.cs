@@ -15,7 +15,7 @@ namespace HealthMonitoringService
     {
         private ServiceHost serviceHost;
      // dodati endpoint sa ovim imenom u ServiceDefinition
-     private String externalEndpointName = "HealthMonitoring";
+     private String externalEndpointName = "HealthMonitoring ";
         public JobServer()
         {
             RoleInstanceEndpoint inputEndPoint = RoleEnvironment.
@@ -24,7 +24,7 @@ namespace HealthMonitoringService
             externalEndpointName);
             serviceHost = new ServiceHost(typeof(JobServerProvider));
             NetTcpBinding binding = new NetTcpBinding();
-            serviceHost.AddServiceEndpoint(typeof(IJob), binding, endpoint);
+            serviceHost.AddServiceEndpoint(typeof(IHealthMonitoring), binding, endpoint);
         }
         public void Open()
         {

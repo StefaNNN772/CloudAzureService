@@ -56,6 +56,12 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HealthMonitoringContracts\HealthMonitoringContracts.csproj">
+      <Project>{9ead6090-3a8f-4b30-af2d-f19ef41d07e2}</Project>
+      <Name>HealthMonitoringContracts</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
