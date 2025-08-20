@@ -1,13 +1,62 @@
-.vs/
-.vscode/
-.idea/
-*.sln.iml
-*.DotSettings.user
-*.csx/
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
 
+# Visual Studio
+.vs/
+*.suo
 *.user
 *.userosscache
-*.suo
 *.sln.docstates
-*.csproj.user
-*.vbproj.user
+*.sln.ide
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+[Aa]rtifacts/
+[Tt]mp/
+*.log
+
+# Tests
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+*.coveragexml
+
+# NuGet
+packages/
+!**/packages/build/
+!**/packages/repositories.config
+*.nupkg
+*.snupkg
+# Ako koristiš PackageReference, packages/ neće ni postojati
+
+# Rider/ReSharper
+.idea/
+_ReSharper*/
+*.DotSettings.user
+*.sln.DotSettings.user
+
+# VS Code
+.vscode/
+
+# Azure Cloud Service (classic)
+# Generisani fajlovi/foldei prilikom pack/publish
+csx/
+*.cspkg
+
+# Publish profili i podešavanja sa kredencijalima
+**/*.pubxml
+**/*.pubxml.user
+**/*.publishsettings
+
+# Konfiguracije sa tajnama:
+# Zadrži ServiceDefinition.csdef i Local .cscfg u repou,
+# a Cloud .cscfg (sa ključevima) ignoriši i koristi .example varijantu.
+**/ServiceConfiguration.Cloud.cscfg
+!**/ServiceConfiguration.Cloud.cscfg.example
