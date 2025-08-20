@@ -7,7 +7,7 @@
   </Runtime>
   <Properties>
     <Property name="TargetFrameworkVersion" value="v4.5.1" />
-    <Property name="OutputDir" value="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\obj\Debug\NotificationService\" />
+    <Property name="OutputDir" value="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\obj\Debug\NotificationService\" />
     <Property name="RoleTargetFramework" value="v4.5.1" />
     <Property name="SitePhysicalPath" value="" />
     <Property name="EntryPoint" value="NotificationService.dll" />

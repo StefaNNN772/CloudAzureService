@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<serviceModel xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="StackOverflowProject" generation="1" functional="0" release="0" Id="f20a4fb1-7b65-4427-9843-1f85d5f48b74" dslVersion="1.2.0.0" xmlns="http://schemas.microsoft.com/dsltools/RDSM">
+<serviceModel xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="StackOverflowProject" generation="1" functional="0" release="0" Id="46d71076-caa1-48a0-8199-dcf9f02f64d6" dslVersion="1.2.0.0" xmlns="http://schemas.microsoft.com/dsltools/RDSM">
   <groups>
     <group name="StackOverflowProjectGroup" generation="1" functional="0" release="0">
       <componentports>
@@ -172,7 +172,7 @@
       </maps>
       <components>
         <groupHascomponents>
-          <role name="HealthMonitoringService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\HealthMonitoringService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaWorkerHost.exe " memIndex="-1" hostingEnvironment="consoleroleadmin" hostingEnvironmentVersion="2">
+          <role name="HealthMonitoringService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\HealthMonitoringService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaWorkerHost.exe " memIndex="-1" hostingEnvironment="consoleroleadmin" hostingEnvironmentVersion="2">
             <componentports>
               <inPort name="HealthMonitoring" protocol="tcp" portRanges="10100" />
             </componentports>
@@ -194,7 +194,7 @@
           </sCSPolicy>
         </groupHascomponents>
         <groupHascomponents>
-          <role name="HealthStatusService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\HealthStatusService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaIISHost.exe " memIndex="-1" hostingEnvironment="frontendadmin" hostingEnvironmentVersion="2">
+          <role name="HealthStatusService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\HealthStatusService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaIISHost.exe " memIndex="-1" hostingEnvironment="frontendadmin" hostingEnvironmentVersion="2">
             <componentports>
               <inPort name="Endpoint1" protocol="http" portRanges="8080" />
             </componentports>
@@ -215,7 +215,7 @@
           </sCSPolicy>
         </groupHascomponents>
         <groupHascomponents>
-          <role name="NotificationService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\NotificationService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaWorkerHost.exe " memIndex="-1" hostingEnvironment="consoleroleadmin" hostingEnvironmentVersion="2">
+          <role name="NotificationService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\NotificationService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaWorkerHost.exe " memIndex="-1" hostingEnvironment="consoleroleadmin" hostingEnvironmentVersion="2">
             <componentports>
               <inPort name="EmailNotify" protocol="tcp" portRanges="10101" />
             </componentports>
@@ -235,7 +235,7 @@
           </sCSPolicy>
         </groupHascomponents>
         <groupHascomponents>
-          <role name="StackOverflowService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\StackOverflowService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaIISHost.exe " memIndex="-1" hostingEnvironment="frontendadmin" hostingEnvironmentVersion="2">
+          <role name="StackOverflowService" generation="1" functional="0" release="0" software="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\csx\Debug\roles\StackOverflowService" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaIISHost.exe " memIndex="-1" hostingEnvironment="frontendadmin" hostingEnvironmentVersion="2">
             <componentports>
               <inPort name="Endpoint1" protocol="http" portRanges="80" />
             </componentports>
@@ -273,24 +273,24 @@
     </group>
   </groups>
   <implements>
-    <implementation Id="07626506-1208-4a05-953b-51b8948412d4" ref="Microsoft.RedDog.Contract\ServiceContract\StackOverflowProjectContract@ServiceDefinition">
+    <implementation Id="fcd794de-b9ec-414c-a012-4428f719b783" ref="Microsoft.RedDog.Contract\ServiceContract\StackOverflowProjectContract@ServiceDefinition">
       <interfacereferences>
-        <interfaceReference Id="f723fb8d-e80b-44db-8c09-ee24fb5a7d5e" ref="Microsoft.RedDog.Contract\Interface\HealthMonitoringService:HealthMonitoring@ServiceDefinition">
+        <interfaceReference Id="85a0da5b-f903-42f1-a1a2-234a7191e995" ref="Microsoft.RedDog.Contract\Interface\HealthMonitoringService:HealthMonitoring@ServiceDefinition">
           <inPort>
             <inPortMoniker name="/StackOverflowProject/StackOverflowProjectGroup/HealthMonitoringService:HealthMonitoring" />
           </inPort>
         </interfaceReference>
-        <interfaceReference Id="c2761632-ddb4-44cd-954f-99f35e2648d6" ref="Microsoft.RedDog.Contract\Interface\HealthStatusService:Endpoint1@ServiceDefinition">
+        <interfaceReference Id="a8e951be-673f-49f4-b128-4e11e8a95b63" ref="Microsoft.RedDog.Contract\Interface\HealthStatusService:Endpoint1@ServiceDefinition">
           <inPort>
             <inPortMoniker name="/StackOverflowProject/StackOverflowProjectGroup/HealthStatusService:Endpoint1" />
           </inPort>
         </interfaceReference>
-        <interfaceReference Id="a7aeb75e-0f0a-49f5-a002-665f1e7ca95e" ref="Microsoft.RedDog.Contract\Interface\NotificationService:EmailNotify@ServiceDefinition">
+        <interfaceReference Id="c0ce8c28-838e-4b63-b0ff-df5b0c23ef29" ref="Microsoft.RedDog.Contract\Interface\NotificationService:EmailNotify@ServiceDefinition">
           <inPort>
             <inPortMoniker name="/StackOverflowProject/StackOverflowProjectGroup/NotificationService:EmailNotify" />
           </inPort>
         </interfaceReference>
-        <interfaceReference Id="e67c2202-2c40-45a0-9604-0a52bbf4d8ca" ref="Microsoft.RedDog.Contract\Interface\StackOverflowService:Endpoint1@ServiceDefinition">
+        <interfaceReference Id="8f5c867d-04b3-4243-bc07-06ecd3cb66f4" ref="Microsoft.RedDog.Contract\Interface\StackOverflowService:Endpoint1@ServiceDefinition">
           <inPort>
             <inPortMoniker name="/StackOverflowProject/StackOverflowProjectGroup/StackOverflowService:Endpoint1" />
           </inPort>

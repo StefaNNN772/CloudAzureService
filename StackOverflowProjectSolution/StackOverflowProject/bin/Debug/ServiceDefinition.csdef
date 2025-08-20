@@ -26,10 +26,10 @@
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\StackOverflowServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\StackOverflowServiceContent\" />
       </Content>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\StackOverflowServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\ecf\StackOverflowServiceContent\" />
       </Content>
     </Contents>
   </WebRole>
@@ -42,10 +42,10 @@
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\NotificationServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\NotificationServiceContent\" />
       </Content>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\NotificationServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\ecf\NotificationServiceContent\" />
       </Content>
     </Contents>
   </WorkerRole>
@@ -60,10 +60,10 @@
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthMonitoringServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthMonitoringServiceContent\" />
       </Content>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\HealthMonitoringServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\ecf\HealthMonitoringServiceContent\" />
       </Content>
     </Contents>
   </WorkerRole>
@@ -84,10 +84,10 @@
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthStatusServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthStatusServiceContent\" />
       </Content>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\HealthStatusServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\ecf\HealthStatusServiceContent\" />
       </Content>
     </Contents>
   </WebRole>
