@@ -17,7 +17,7 @@ namespace HealthMonitoringService
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
         private JobServer jobServer = new JobServer();
-
+        private AdminAlertEmailsServer aaeServer = new AdminAlertEmailsServer();
         
         public override void Run()
         {
@@ -47,6 +47,7 @@ namespace HealthMonitoringService
             bool result = base.OnStart();
 
             jobServer.Open();
+            aaeServer.Open();
 
             Trace.TraceInformation("HealthMonitoringService has been started");
 
@@ -63,6 +64,7 @@ namespace HealthMonitoringService
             base.OnStop();
 
             jobServer.Close();
+            aaeServer.Close();
 
             Trace.TraceInformation("HealthMonitoringService has stopped");
         }

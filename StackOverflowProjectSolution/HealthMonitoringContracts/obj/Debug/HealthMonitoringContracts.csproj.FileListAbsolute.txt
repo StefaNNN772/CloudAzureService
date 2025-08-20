@@ -1,0 +1,6 @@
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthMonitoringContracts\bin\Debug\HealthMonitoringContracts.dll
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthMonitoringContracts\bin\Debug\HealthMonitoringContracts.pdb
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthMonitoringContracts\obj\Debug\HealthMonitoringContracts.csproj.AssemblyReference.cache
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthMonitoringContracts\obj\Debug\HealthMonitoringContracts.csproj.CoreCompileInputs.cache
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthMonitoringContracts\obj\Debug\HealthMonitoringContracts.dll
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthMonitoringContracts\obj\Debug\HealthMonitoringContracts.pdb

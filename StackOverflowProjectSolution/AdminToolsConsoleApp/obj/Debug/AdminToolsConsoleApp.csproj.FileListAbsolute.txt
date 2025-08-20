@@ -1,0 +1,10 @@
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\bin\Debug\AdminToolsConsoleApp.exe.config
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\bin\Debug\AdminToolsConsoleApp.exe
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\bin\Debug\AdminToolsConsoleApp.pdb
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\bin\Debug\HealthMonitoringContracts.dll
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\bin\Debug\HealthMonitoringContracts.pdb
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\obj\Debug\AdminToolsConsoleApp.csproj.AssemblyReference.cache
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\obj\Debug\AdminToolsConsoleApp.csproj.CoreCompileInputs.cache
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\obj\Debug\AdminToolsConsoleApp.csproj.CopyComplete
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\obj\Debug\AdminToolsConsoleApp.exe
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\AdminToolsConsoleApp\obj\Debug\AdminToolsConsoleApp.pdb

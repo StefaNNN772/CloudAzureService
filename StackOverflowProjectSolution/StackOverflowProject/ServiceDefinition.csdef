@@ -30,6 +30,7 @@
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="HealthMonitoring" protocol="tcp" port="10100" />
+      <InputEndpoint name="AdminAlertEmails" protocol="tcp" port="10102" />
     </Endpoints>
   </WorkerRole>
   <WebRole name="HealthStatusService" vmsize="Standard_D1_v2">

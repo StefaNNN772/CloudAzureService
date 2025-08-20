@@ -1,0 +1,6 @@
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\NotificationContracts\bin\Debug\NotificationContracts.dll
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\NotificationContracts\bin\Debug\NotificationContracts.pdb
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.csproj.AssemblyReference.cache
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.csproj.CoreCompileInputs.cache
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.dll
+C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.pdb
