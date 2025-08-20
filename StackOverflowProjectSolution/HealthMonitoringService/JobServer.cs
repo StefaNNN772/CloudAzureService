@@ -15,7 +15,7 @@ namespace HealthMonitoringService
     {
         private ServiceHost serviceHost;
      // dodati endpoint sa ovim imenom u ServiceDefinition
-     private String externalEndpointName = "HealthMonitoring ";
+     private String externalEndpointName = "HealthMonitoring";
         public JobServer()
         {
             RoleInstanceEndpoint inputEndPoint = RoleEnvironment.

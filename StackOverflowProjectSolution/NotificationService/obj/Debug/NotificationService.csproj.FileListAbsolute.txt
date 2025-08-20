@@ -1,0 +1,12 @@
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\NotificationService.dll.config
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\NotificationService.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\NotificationService.pdb
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\Microsoft.WindowsAzure.Diagnostics.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\NotificationContracts.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\MonAgentListener.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\bin\Debug\NotificationContracts.pdb
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\obj\Debug\NotificationService.csproj.AssemblyReference.cache
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\obj\Debug\NotificationService.csproj.CoreCompileInputs.cache
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\obj\Debug\Notifica.A960C9D4.Up2Date
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\obj\Debug\NotificationService.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationService\obj\Debug\NotificationService.pdb

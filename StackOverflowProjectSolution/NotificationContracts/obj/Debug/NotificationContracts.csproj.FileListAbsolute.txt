@@ -1,0 +1,6 @@
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationContracts\bin\Debug\NotificationContracts.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationContracts\bin\Debug\NotificationContracts.pdb
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.csproj.AssemblyReference.cache
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.csproj.CoreCompileInputs.cache
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.dll
+C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\NotificationContracts\obj\Debug\NotificationContracts.pdb
