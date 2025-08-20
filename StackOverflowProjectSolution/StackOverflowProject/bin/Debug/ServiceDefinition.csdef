@@ -19,10 +19,12 @@
     </Sites>
     <ConfigurationSettings>
       <Setting name="DataConnectionString" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
+    <LocalResources></LocalResources>
     <Contents>
       <Content destination=".\">
         <SourceDirectory path="C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\StackOverflowServiceContent\" />

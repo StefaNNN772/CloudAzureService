@@ -74,7 +74,6 @@ C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSo
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\bin\Newtonsoft.Json.xml
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\bin\Antlr3.Runtime.pdb
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\obj\Debug\StackOverflowService.csproj.AssemblyReference.cache
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\obj\Debug\StackOverflowService.csproj.CoreCompileInputs.cache
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\obj\Debug\StackOverflowService.csproj.CopyComplete
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowService\obj\Debug\StackOverflowService.dll

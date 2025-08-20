@@ -3,6 +3,7 @@
 .idea/
 *.sln.iml
 *.DotSettings.user
+*.csx/
 
 *.user
 *.userosscache

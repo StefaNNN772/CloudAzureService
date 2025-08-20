@@ -74,7 +74,6 @@ C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSo
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\bin\Newtonsoft.Json.xml
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\bin\Antlr3.Runtime.pdb
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\obj\Debug\HealthStatusService.csproj.AssemblyReference.cache
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\obj\Debug\HealthStatusService.csproj.CoreCompileInputs.cache
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\obj\Debug\HealthStatusService.csproj.CopyComplete
 C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\HealthStatusService\obj\Debug\HealthStatusService.dll
