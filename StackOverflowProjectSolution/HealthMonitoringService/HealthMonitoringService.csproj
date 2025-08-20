@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminAlertEmailsProvider.cs" />
+    <Compile Include="AdminAlertEmailsServer.cs" />
     <Compile Include="JobServer.cs" />
     <Compile Include="JobServerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
