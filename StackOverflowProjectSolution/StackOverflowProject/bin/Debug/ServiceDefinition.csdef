@@ -27,15 +27,12 @@
     <LocalResources></LocalResources>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\StackOverflowServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\StackOverflowServiceContent\" />
       </Content>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\ecf\StackOverflowServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\StackOverflowServiceContent\" />
       </Content>
     </Contents>
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
   </WebRole>
   <WorkerRole name="NotificationService" vmsize="Standard_D1_v2">
     <ConfigurationSettings>
@@ -46,7 +43,10 @@
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\NotificationServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\NotificationServiceContent\" />
+      </Content>
+      <Content destination=".\">
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\NotificationServiceContent\" />
       </Content>
     </Contents>
   </WorkerRole>
@@ -54,6 +54,7 @@
     <ConfigurationSettings>
       <Setting name="AlertEmailsConnectionString" />
       <Setting name="HealthCheckConnectionString" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="HealthMonitoring" protocol="tcp" port="10100" />
@@ -61,7 +62,10 @@
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthMonitoringServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthMonitoringServiceContent\" />
+      </Content>
+      <Content destination=".\">
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\HealthMonitoringServiceContent\" />
       </Content>
     </Contents>
   </WorkerRole>
@@ -75,13 +79,17 @@
     </Sites>
     <ConfigurationSettings>
       <Setting name="HealthCheckConnectionString" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="8080" />
     </Endpoints>
     <Contents>
       <Content destination=".\">
-        <SourceDirectory path="C:\Users\User\OneDrive\Dokumenti\GitHub\CloudAzureService\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthStatusServiceContent\" />
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\rcf\Debug\HealthStatusServiceContent\" />
+      </Content>
+      <Content destination=".\">
+        <SourceDirectory path="C:\Users\sef_s\Desktop\Cloud - Projekat\StackOverflowProjectSolution\StackOverflowProject\ecf\HealthStatusServiceContent\" />
       </Content>
     </Contents>
   </WebRole>

@@ -27,12 +27,14 @@
     <ConfigurationSettings>
       <Setting name="AlertEmailsConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="HealthCheckConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
   <Role name="HealthStatusService">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="HealthCheckConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

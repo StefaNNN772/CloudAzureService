@@ -1,1 +1,1 @@
-HealthStatusService.dll
+bin\HealthStatusService.dll

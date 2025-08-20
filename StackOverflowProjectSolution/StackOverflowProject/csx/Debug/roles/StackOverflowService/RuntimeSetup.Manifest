@@ -2,4 +2,7 @@
 <RuntimeSetup>
   <Operation type="Path" path="base\x64" />
   <Operation type="Path" path="base\x86" />
+  <AdditionalRoleIdentities>
+    <Identity username="NetworkService" domain="NT AUTHORITY" />
+  </AdditionalRoleIdentities>
 </RuntimeSetup>

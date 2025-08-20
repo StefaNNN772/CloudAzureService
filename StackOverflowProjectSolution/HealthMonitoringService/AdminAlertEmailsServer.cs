@@ -14,7 +14,7 @@ namespace HealthMonitoringService
     {
         private ServiceHost serviceHost;
         // dodati endpoint sa ovim imenom u ServiceDefinition
-        private String externalEndpointName = "AdminAlertEmails ";
+        private String externalEndpointName = "AdminAlertEmails";
         public AdminAlertEmailsServer()
         {
             RoleInstanceEndpoint inputEndPoint = RoleEnvironment.
