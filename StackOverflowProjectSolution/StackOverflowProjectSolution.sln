@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.36227.6
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "StackOverflowProject", "StackOverflowProject\StackOverflowProject.ccproj", "{7D2DAE89-9C8F-4BE0-A9CF-EBD8DBB867BF}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthMonitoringContracts", "HealthMonitoringContracts\HealthMonitoringContracts.csproj", "{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationContracts", "NotificationContracts\NotificationContracts.csproj", "{96575019-3164-4843-A070-DA9F9597C09E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseRepository", "DatabaseRepository\DatabaseRepository.csproj", "{EC61E51C-1186-46D4-80AD-9B603258B251}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{96575019-3164-4843-A070-DA9F9597C09E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96575019-3164-4843-A070-DA9F9597C09E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96575019-3164-4843-A070-DA9F9597C09E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC61E51C-1186-46D4-80AD-9B603258B251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC61E51C-1186-46D4-80AD-9B603258B251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC61E51C-1186-46D4-80AD-9B603258B251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC61E51C-1186-46D4-80AD-9B603258B251}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

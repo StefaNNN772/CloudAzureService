@@ -53,10 +53,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AlertEmails.cs" />
     <Compile Include="Models\Answer.cs" />
+    <Compile Include="Models\HealthCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Repositories\AlertEmailsRepository.cs" />
+    <Compile Include="Repositories\AnswerRepository.cs" />
+    <Compile Include="Repositories\HealthCheckRepository.cs" />
+    <Compile Include="Repositories\QuestionRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
