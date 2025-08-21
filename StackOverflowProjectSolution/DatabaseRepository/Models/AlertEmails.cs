@@ -20,6 +20,7 @@ namespace DatabaseRepository.Models
         {
             PartitionKey = "AlertEmails";
             RowKey = index;
+            
         }
     }
 }

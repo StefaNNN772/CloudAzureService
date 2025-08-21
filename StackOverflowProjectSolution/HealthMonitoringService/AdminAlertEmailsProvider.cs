@@ -1,4 +1,6 @@
-﻿using HealthMonitoringContracts;
+﻿using DatabaseRepository.Models;
+using DatabaseRepository.Repositories;
+using HealthMonitoringContracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +11,35 @@ namespace HealthMonitoringService
 {
     public class AdminAlertEmailsProvider : IAdminAlertEmails
     {
+
+        private static AlertEmailsRepository repo = new AlertEmailsRepository();
+
         public bool AddEmail(string email)
         {
-            Console.WriteLine($"Added email: {email}.");
-            return true;
+            AlertEmails alertEmail = new AlertEmails(email) { Email = email};
+            bool result = repo.AddAlertEmail(alertEmail);
+            
+            return result;
         }
 
         public List<string> GetAllEmails()
         {
-            throw new NotImplementedException();
+            List<string> result = new List<string>();
+            var retrieve = repo.GetAllAlertEmails();
+            foreach(var ret in retrieve)
+            {
+                result.Add(ret.Email);
+            }
+
+            return result;
         }
 
         public bool RemoveEmail(string email)
         {
-            throw new NotImplementedException();
+            AlertEmails alertEmail = new AlertEmails(email);
+            bool result = repo.RemoveAlertEmail(alertEmail);
+
+            return result;
         }
     }
 }

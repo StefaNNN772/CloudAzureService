@@ -59,6 +59,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseRepository\DatabaseRepository.csproj">
+      <Project>{ec61e51c-1186-46d4-80ad-9b603258b251}</Project>
+      <Name>DatabaseRepository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HealthMonitoringContracts\HealthMonitoringContracts.csproj">
       <Project>{9ead6090-3a8f-4b30-af2d-f19ef41d07e2}</Project>
       <Name>HealthMonitoringContracts</Name>

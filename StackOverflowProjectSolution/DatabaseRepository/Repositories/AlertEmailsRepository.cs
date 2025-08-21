@@ -22,18 +22,45 @@ namespace DatabaseRepository.Repositories
             _table = tableClient.GetTableReference("AlertEmailsTable");
             _table.CreateIfNotExists();
         }
-        public IQueryable<AlertEmails> RetrieveAllAlertEmails()
+        public IQueryable<AlertEmails> GetAllAlertEmails()
         {
             var results = from g in _table.CreateQuery<AlertEmails>()
                           where g.PartitionKey == "AlertEmails"
                           select g;
             return results;
         }
-        public void AddAlertEmail(AlertEmails alertEmails)
+        public bool AddAlertEmail(AlertEmails alertEmail)
         {
             // Samostalni rad: izmestiti tableName u konfiguraciju servisa.
-            TableOperation insertOperation = TableOperation.Insert(alertEmails);
-            _table.Execute(insertOperation);
+            var entity = _table.CreateQuery<AlertEmails>()
+                     .Where(g => g.PartitionKey == "AlertEmails"
+                              && g.RowKey == alertEmail.RowKey)
+                     .FirstOrDefault();
+
+            if (entity != null)
+                return false;
+
+            TableOperation insertOperation = TableOperation.Insert(alertEmail);
+            var result = _table.Execute(insertOperation);
+            return result != null && result.HttpStatusCode == 204;
+        }
+
+        public  bool  RemoveAlertEmail(AlertEmails alertEmail)
+        {
+            var entity = _table.CreateQuery<AlertEmails>()
+                      .Where(g => g.PartitionKey == "AlertEmails"
+                               && g.RowKey == alertEmail.RowKey)
+                      .FirstOrDefault();
+
+            if (entity == null)
+                return false; // nothing to delete
+
+
+
+
+            TableOperation deleteOperation = TableOperation.Delete(entity);
+            var result = _table.Execute(deleteOperation);
+            return result != null && result.HttpStatusCode == 204;
         }
     }
 }
