@@ -7,26 +7,15 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoringService
 {
-    public class JobServerProvider : IAdminAlertEmails, IHealthMonitoring
+    public class JobServerProvider :  IHealthMonitoring
     {
-        public bool AddEmail(string email)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public bool CheckServices()
         {
             throw new NotImplementedException();
         }
 
-        public List<string> GetAllEmails()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool RemoveEmail(string email)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

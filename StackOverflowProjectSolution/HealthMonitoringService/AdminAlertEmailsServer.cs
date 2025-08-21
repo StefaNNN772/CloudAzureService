@@ -21,7 +21,7 @@ namespace HealthMonitoringService
             CurrentRoleInstance.InstanceEndpoints[externalEndpointName];
             string endpoint = String.Format("net.tcp://{0}/{1}", inputEndPoint.IPEndpoint,
             externalEndpointName);
-            serviceHost = new ServiceHost(typeof(JobServerProvider));
+            serviceHost = new ServiceHost(typeof(AdminAlertEmailsProvider));
             NetTcpBinding binding = new NetTcpBinding();
             serviceHost.AddServiceEndpoint(typeof(IAdminAlertEmails), binding, endpoint);
         }

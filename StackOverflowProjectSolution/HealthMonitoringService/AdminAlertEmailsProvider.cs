@@ -11,7 +11,8 @@ namespace HealthMonitoringService
     {
         public bool AddEmail(string email)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Added email: {email}.");
+            return true;
         }
 
         public List<string> GetAllEmails()
