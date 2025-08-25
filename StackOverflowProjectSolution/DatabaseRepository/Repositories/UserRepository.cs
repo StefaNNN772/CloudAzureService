@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure;
+using Microsoft.WindowsAzure.Storage.Table.Queryable;
+using System.Collections;
 
 namespace DatabaseRepository.Repositories
 {
@@ -27,6 +29,31 @@ namespace DatabaseRepository.Repositories
                           where g.PartitionKey == "User"
                           select g;
             return results;
+        }
+
+        public bool UserExists(string email)
+        {
+            var query = (from g in _table.CreateQuery<User>()
+                          where g.PartitionKey == "User" && g.Email == email
+                          select g).Take(1);
+
+            var result = query.FirstOrDefault();
+            return result != null;
+        }
+
+        public bool UserExistsLogin(string email, string password)
+        {
+            var query = (from g in _table.CreateQuery<User>()
+                          where g.PartitionKey == "User" && g.Email == email
+                          select g).Take(1);
+
+            var result = query.FirstOrDefault();
+
+            if (result != null)
+            {
+                return BCrypt.Net.BCrypt.Verify(password, result.Password);
+            }
+            return false;
         }
         public void AddUser(User user)
         {

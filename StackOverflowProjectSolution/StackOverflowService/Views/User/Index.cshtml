@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "User profile";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2>User profile</h2>
+                </div>
+                <div class="card-body">
+                    @if (Session["CurrentUser"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <h4>Welcome!</h4>
+                            <p>Successfuly logged in.</p>
+                            <p>
+                                <strong>User:</strong> @Session["CurrentUser"]<br />
+                                <strong>Date and time:</strong> @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <h4>You are not logged in</h4>
+                            <p>Please log in.</p>
+                            <p>
+                                <a href="@Url.Action("Login", "User")" class="btn btn-primary">Login</a>
+                                <a href="@Url.Action("Register", "User")" class="btn btn-outline-primary">Registration</a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

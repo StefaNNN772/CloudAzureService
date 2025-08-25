@@ -1,33 +1,49 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Početna stranica";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<div class="jumbotron">
+    <h1>StackOverflow aplikacija</h1>
+    <p class="lead">Dobrodošli na StackOverflow aplikaciju! Ovde možete postavljati pitanja i odgovore iz oblasti programiranja.</p>
+    <p>
+        <a href="@Url.Action("Index", "Questions")" class="btn btn-primary btn-lg">
+            <i class="fas fa-question-circle mr-2"></i>Pregledaj pitanja
+        </a>
+    </p>
+</div>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<div class="row">
+    <div class="col-md-4">
+        <h2>Postavite pitanje</h2>
+        <p>Imate problem sa kodom? Postavite pitanje i dobićete pomoć od zajednice.</p>
+        <p>
+            <a href="@Url.Action("Create", "Questions")" class="btn btn-outline-primary">
+                <i class="fas fa-plus mr-2"></i>Novo pitanje
+            </a>
+        </p>
     </div>
-</main>
+    <div class="col-md-4">
+        <h2>Odgovorite na pitanja</h2>
+        <p>Pomozite drugima tako što ćete odgovoriti na njihova pitanja i deliti svoje znanje.</p>
+        <p>
+            <a href="@Url.Action("Index", "Questions")" class="btn btn-outline-primary">
+                <i class="fas fa-comments mr-2"></i>Sva pitanja
+            </a>
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2>Glasajte i zaradite reputaciju</h2>
+        <p>Glasajte za dobre odgovore i zaradite reputaciju kada vaši odgovori budu prihvaćeni.</p>
+        <p>
+            <a href="@Url.Action("Index", "User")" class="btn btn-outline-primary">
+                <i class="fas fa-user mr-2"></i>Moj profil
+            </a>
+        </p>
+    </div>
+</div>
+
+<div class="alert alert-info mt-4">
+    <h4>Informacije o sesiji</h4>
+    <p>Session ID: @Session.SessionID</p>
+    <p>Korisnik: @(Session["CurrentUser"] ?? "Nije prijavljen")</p>
+</div>

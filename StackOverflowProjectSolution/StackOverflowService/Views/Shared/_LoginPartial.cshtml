@@ -1,0 +1,44 @@
+﻿@using StackOverflowService.Helpers
+@using StackOverflowService.Models
+
+@{
+    var currentUser = Session.GetObjectFromJson<UserSession>("CurrentUser");
+}
+
+<ul class="navbar-nav ml-auto">
+    @if (Request.IsAuthenticated && currentUser != null)
+    {
+        <li class="nav-item mr-2">
+            <a class="btn btn-outline-secondary" href="@Url.Action("Profile", "User")">
+                <i class="fas fa-user mr-1"></i>My profile
+            </a>
+        </li>
+        <li class="nav-item mr-2">
+            <a class="btn btn-outline-secondary" href="@Url.Action("MyQuestions", "Questions")">
+                <i class="fas fa-question-circle mr-1"></i>My questions
+            </a>
+        </li>
+        <li class="nav-item">
+            @using (Html.BeginForm("Logout", "User", FormMethod.Post, new { id = "logoutForm", @class = "m-0" }))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                </button>
+            }
+        </li>
+    }
+    else
+    {
+        <li class="nav-item mr-2">
+            <a class="btn btn-outline-secondary" href="@Url.Action("Register", "User")">
+                <i class="fas fa-user-plus mr-1"></i>Register
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-outline-primary" href="@Url.Action("Login", "User")">
+                <i class="fas fa-sign-in-alt mr-1"></i>Login
+            </a>
+        </li>
+    }
+</ul>
