@@ -48,5 +48,7 @@ namespace StackOverflowService.Models
 
         [Display(Name = "Profile picture")]
         public HttpPostedFileBase ProfileImage { get; set; }
+
+        public string PictureUrl { get; set; }
     }
 }

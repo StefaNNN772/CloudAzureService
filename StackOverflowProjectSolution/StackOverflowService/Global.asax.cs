@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using StackOverflowService.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace StackOverflowService
             //RouteConfig.RegisterRoutes(RouteTable.Routes);
             RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            GlobalFilters.Filters.Add(new SessionTimeoutFilter());
         }
 
         public void InitBlobs()

@@ -9,7 +9,7 @@
     @if (Request.IsAuthenticated && currentUser != null)
     {
         <li class="nav-item mr-2">
-            <a class="btn btn-outline-secondary" href="@Url.Action("Profile", "User")">
+            <a class="btn btn-outline-secondary" href="@Url.Action("Edit", "User")">
                 <i class="fas fa-user mr-1"></i>My profile
             </a>
         </li>

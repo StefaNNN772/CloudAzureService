@@ -31,6 +31,22 @@ namespace DatabaseRepository.Repositories
             return results;
         }
 
+        public User GetUser(string email)
+        {
+            var result = (from g in _table.CreateQuery<User>()
+                          where g.PartitionKey == "User" && g.Email == email
+                          select g).FirstOrDefault();
+            return result;
+        }
+
+        public User GetUserByRowKey(string rowKey)
+        {
+            var result = (from g in _table.CreateQuery<User>()
+                          where g.PartitionKey == "User" && g.RowKey == rowKey
+                          select g).FirstOrDefault();
+            return result;
+        }
+
         public bool UserExists(string email)
         {
             var query = (from g in _table.CreateQuery<User>()
@@ -60,6 +76,25 @@ namespace DatabaseRepository.Repositories
             // Samostalni rad: izmestiti tableName u konfiguraciju servisa.
             TableOperation insertOperation = TableOperation.Insert(user);
             _table.Execute(insertOperation);
+        }
+
+        public void UpdateUser(User user)
+        {
+            try
+            {
+                TableOperation updateOperation = TableOperation.Replace(user);
+                _table.Execute(updateOperation);
+            }
+            catch (StorageException ex)
+            {
+                if (ex.RequestInformation.HttpStatusCode == 412)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Concurrent update detected for user {user.Email}");
+                    throw new Exception("Someone else modified this user. Please refresh and try again.", ex);
+                }
+
+                throw new Exception("Error updating user: " + ex.Message, ex);
+            }
         }
     }
 }

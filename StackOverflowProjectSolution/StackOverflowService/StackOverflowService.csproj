@@ -204,9 +204,11 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\QuestionController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Filters\SessionTimeoutFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BlobHelper.cs" />
     <Compile Include="Helpers\Genders.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Models\User.cs" />
@@ -269,6 +271,7 @@
     <Content Include="Views\User\Login.cshtml" />
     <Content Include="Views\User\Register.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
