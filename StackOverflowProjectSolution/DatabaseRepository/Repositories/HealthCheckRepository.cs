@@ -24,10 +24,13 @@ namespace DatabaseRepository.Repositories
         }
         public IQueryable<HealthCheck> RetrieveAllHealthChecks()
         {
+            DateTime threshold = DateTime.UtcNow.AddHours(-3);
+
             var results = from g in _table.CreateQuery<HealthCheck>()
                           where g.PartitionKey == "HealthCheck"
+                          && g.Date >= threshold
                           select g;
-            return results;
+            return results.ToList().AsQueryable(); // izvrši query u memoriji
         }
         public void AddHealthCheck(HealthCheck healthCheck)
         {

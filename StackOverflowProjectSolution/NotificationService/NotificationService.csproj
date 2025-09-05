@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HealthMonitoring.cs" />
+    <Compile Include="HealthMonitoringProvider.cs" />
     <Compile Include="JobServer.cs" />
     <Compile Include="JobServerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +62,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HealthMonitoringContracts\HealthMonitoringContracts.csproj">
+      <Project>{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}</Project>
+      <Name>HealthMonitoringContracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NotificationContracts\NotificationContracts.csproj">
       <Project>{96575019-3164-4843-a070-da9f9597c09e}</Project>
       <Name>NotificationContracts</Name>

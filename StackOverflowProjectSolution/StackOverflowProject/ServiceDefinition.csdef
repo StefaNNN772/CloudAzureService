@@ -4,7 +4,7 @@
     <Sites>
       <Site name="Web">
         <Bindings>
-          <Binding name="Endpoint1" endpointName="Endpoint1" />
+          <Binding name="HttpBinding" endpointName="HttpEndpoint" />
         </Bindings>
       </Site>
     </Sites>
@@ -13,7 +13,8 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="Endpoint1" protocol="http" port="80" />
+      <InputEndpoint name="HttpEndpoint" protocol="http" port="8080" />
+      <InputEndpoint name="HealthMonitoring" protocol="tcp" port="10105" />
     </Endpoints>
     <LocalResources>
     </LocalResources>
@@ -24,6 +25,7 @@
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="EmailNotify" protocol="tcp" port="10101" />
+      <InputEndpoint name="HealthMonitoring" protocol="tcp" port="10103" />
     </Endpoints>
   </WorkerRole>
   <WorkerRole name="HealthMonitoringService" vmsize="Standard_D1_v2">
@@ -50,7 +52,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="Endpoint1" protocol="http" port="8080" />
+      <InputEndpoint name="Endpoint1" protocol="http" port="10131" localPort="8082" />
     </Endpoints>
   </WebRole>
 </ServiceDefinition>

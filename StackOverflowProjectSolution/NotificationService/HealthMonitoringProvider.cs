@@ -5,20 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-namespace HealthMonitoringService
+namespace NotificationService
 {
-    public class JobServerProvider :  IHealthMonitoring
+    public class HealthMonitoringProvider : IHealthMonitoring
     {
-       
-
-        
-
         public bool CheckServices()
         {
-            throw new NotImplementedException();
+            return true;
         }
-
-       
     }
 }
