@@ -64,7 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="INotifification.cs" />
+    <Compile Include="INotification.cs" />
+    <Compile Include="INotifyAlertEmails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

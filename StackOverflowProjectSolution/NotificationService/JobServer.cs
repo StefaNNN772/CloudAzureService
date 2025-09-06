@@ -23,7 +23,7 @@ namespace NotificationService
             endPointName);
             serviceHost = new ServiceHost(typeof(JobServerProvider));
             NetTcpBinding binding = new NetTcpBinding();
-            serviceHost.AddServiceEndpoint(typeof(INotifification), binding, endpoint);
+            serviceHost.AddServiceEndpoint(typeof(INotification), binding, endpoint);
         }
         public void Open()
         {

@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace NotificationContracts
 {
     [ServiceContract]
-    public interface INotifification
+    public interface INotifyAlertEmails
     {
         [OperationContract]
-        void SendEmails(List<string> emails, string emailBody);
+        Task SendEmailsAsync(List<string> emails, string emailBody);
 
     }
 }

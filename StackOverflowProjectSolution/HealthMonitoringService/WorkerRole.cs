@@ -12,6 +12,7 @@ using HealthMonitoringService.UniversalConnector;
 using HealthMonitoringContracts;
 using DatabaseRepository.Repositories;
 using DatabaseRepository.Models;
+using NotificationContracts;
 
 namespace HealthMonitoringService
 {
@@ -20,7 +21,9 @@ namespace HealthMonitoringService
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
         private readonly HealthCheckRepository _healthCheckRepository = new HealthCheckRepository();
+        private readonly AlertEmailsRepository _alertEmailsRepository = new AlertEmailsRepository();
 
+        private NotifyAlertEmails notifyAlertEmails = new NotifyAlertEmails();
         private JobServer jobServer = new JobServer();
         private AdminAlertEmailsServer aaeServer = new AdminAlertEmailsServer();
         
@@ -93,6 +96,18 @@ namespace HealthMonitoringService
             serviceNotificationConnector.Connect("net.tcp://localhost:10103/HealthMonitoring");
             IHealthMonitoring healthMonitoringNotificationService = serviceNotificationConnector.GetProxy();
 
+            ServiceConnector<INotification> serviceConnectorSendEmails = new ServiceConnector<INotification>();
+            serviceConnector.Connect("net.tcp://localhost:10101/EmailNotify");
+            INotification sendEmailsService = serviceConnectorSendEmails.GetProxy();
+
+            List<AlertEmails> emails = _alertEmailsRepository.GetAllAlertEmails().ToList();
+            List<string> emailsString = new List<string>();
+            foreach(var email in emails)
+            {
+                emailsString.Add(email.Email);
+            }
+           
+
             _ = Task.Run(async () =>
             {
                 while (!cancellationToken.IsCancellationRequested)
@@ -123,10 +138,16 @@ namespace HealthMonitoringService
 
                         _healthCheckRepository.AddHealthCheck(healthCheckNO);
 
+                        
+
                     }
                     catch (Exception ex)
                     {
-                        Trace.TraceError($"not_ok - {ex.Message}");
+                        string message = $"not_ok - {ex.Message}";
+                        Trace.TraceError(message);
+                        
+                       await notifyAlertEmails.SendEmailsAsync(emailsString, message);
+                        
                     }
 
                     await Task.Delay(TimeSpan.FromSeconds(4), cancellationToken);

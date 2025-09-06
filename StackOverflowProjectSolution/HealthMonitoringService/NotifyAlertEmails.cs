@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NotificationService
+namespace HealthMonitoringService
 {
-    public class JobServerProvider : INotification
+    public class NotifyAlertEmails:INotifyAlertEmails
     {
-        private readonly string _postmarkApiKey = "481459ee-0b66-45f6-8a87-47a7ad46da2b"; 
-        private readonly string _fromEmail = "grahovac.pr100.2021@uns.ac.rs";    
+        private readonly string _postmarkApiKey = "481459ee-0b66-45f6-8a87-47a7ad46da2b";
+        private readonly string _fromEmail = "grahovac.pr100.2021@uns.ac.rs";
 
         public async Task SendEmailsAsync(List<string> emails, string emailBody)
         {
