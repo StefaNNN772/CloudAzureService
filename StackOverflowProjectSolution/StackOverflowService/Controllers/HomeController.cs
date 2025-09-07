@@ -38,7 +38,7 @@ namespace StackOverflowService.Controllers
 
             // Dobijanje svih pitanja sa dodatnim informacijama
             var questions = questionRepo.RetrieveAllQuestions().ToList();
-            var questionsWithDetails = new List<dynamic>();
+            var questionsWithDetails = new List<QuestionModel>();
 
             foreach (var question in questions)
             {
@@ -46,8 +46,7 @@ namespace StackOverflowService.Controllers
                 var answersCount = answerRepo.RetrieveAllAnswers()
                     .Where(a => a.QuestionId == question.RowKey).ToList().Count();
 
-
-                questionsWithDetails.Add(new
+                questionsWithDetails.Add(new QuestionModel
                 {
                     Question = question,
                     User = user,
@@ -55,8 +54,10 @@ namespace StackOverflowService.Controllers
                 });
             }
 
-            ViewBag.Questions = questionsWithDetails;
-            return View();
+            ViewBag.CurrentUserId = currentUserId;
+            ViewBag.IsLoggedIn = !string.IsNullOrEmpty(currentUserId);
+
+            return View(questionsWithDetails);
         }
 
         //Post metoda za postavljanje pitanja
@@ -156,9 +157,28 @@ namespace StackOverflowService.Controllers
             return Json(new
             {
                 success = true,
-                question = question,
+                question = new
+                {
+                    question.RowKey,
+                    question.Title,
+                    question.Description,
+                    question.ProblemPictureUrl,
+                    question.BestAnswerId,
+                    FormattedTimestamp = question.Timestamp.ToString("dd.MM.yyyy HH:mm")
+                },
                 questionUser = questionUser,
-                answers = answersWithDetails,
+                answers = answersWithDetails.Select(a => new {
+                    Answer = new
+                    {
+                        a.Answer.RowKey,
+                        a.Answer.Body,
+                        FormattedTimestamp = a.Answer.Timestamp.ToString("dd.MM.yyyy HH:mm")
+                    },
+                    a.User,
+                    a.Score,
+                    a.UserVote,
+                    a.IsBestAnswer
+                }),
                 canMarkBest = currentUserId == question.UserId && string.IsNullOrEmpty(question.BestAnswerId),
                 isQuestionClosed = !string.IsNullOrEmpty(question.BestAnswerId)
             }, JsonRequestBehavior.AllowGet);

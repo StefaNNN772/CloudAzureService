@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<StackOverflowService.Models.QuestionModel>
+
+@{
     ViewBag.Title = "StackOverflow Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -18,18 +20,18 @@
                     <div class="card-body">
                         <form id="questionForm" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="questionTitle">Naslov pitanja:</label>
+                                <label for="questionTitle">Question title:</label>
                                 <input type="text" class="form-control" id="questionTitle" name="title" required>
                             </div>
                             <div class="form-group">
-                                <label for="questionDescription">Opis problema:</label>
+                                <label for="questionDescription">Description:</label>
                                 <textarea class="form-control" id="questionDescription" name="description" rows="4" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="problemImage">Slika greške/problema (opciono):</label>
+                                <label for="problemImage">Image for the problem (optional):</label>
                                 <input type="file" class="form-control-file" id="problemImage" name="problemImage" accept="image/*">
                             </div>
-                            <button type="submit" class="btn btn-primary">Postavi pitanje</button>
+                            <button type="submit" class="btn btn-primary">Ask the question!</button>
                         </form>
                     </div>
                 </div>
@@ -37,166 +39,173 @@
             else
             {
                 <div class="alert alert-info">
-                    <strong>Prijavite se</strong> da biste mogli postaviti pitanja i odgovoriti na postojeća.
+                    <strong>Log in</strong> so you can ask and answer question.
                 </div>
             }
 
             <!-- Lista pitanja -->
-        <div class="questions-list">
-            @foreach (dynamic item in ViewBag.Questions)
-            {
-                <div class="question-box card mb-3" data-question-id="@item.Question.RowKey">
-                    <div class="card-body">
-                        <!-- Informacije o korisniku -->
-                        <div class="user-info d-flex align-items-center mb-3">
-                            @if (!string.IsNullOrEmpty(item.User.PictureUrl))
-                            {
-                                <img src="@item.User.PictureUrl" alt="Profile Picture" class="profile-picture rounded-circle mr-3" style="width: 50px; height: 50px; object-fit: cover;">
-                            }
-                            else
-                            {
-                                <div class="profile-picture rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: #007bff; color: white; font-weight: bold;">
-                                    @item.User.Name.Substring(0, 1).ToUpper()
+            <div class="questions-list">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="question-box card mb-3" data-question-id="@item.Question.RowKey">
+                            <div class="card-body">
+                                <!-- Informacije o korisniku -->
+                                <div class="user-info d-flex align-items-center mb-3">
+                                    @if (!string.IsNullOrEmpty(item.User.PictureUrl))
+                                    {
+                                        <img src="@item.User.PictureUrl" alt="Profile Picture" class="profile-picture rounded-circle mr-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="profile-picture rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: #007bff; color: white; font-weight: bold;">
+                                            @item.User.Name.Substring(0, 1).ToUpper()
+                                        </div>
+                                    }
+                                    <div>
+                                        <strong>@item.User.Name @item.User.LastName</strong>
+                                        <div class="text-muted small">@item.Question.Timestamp.ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
                                 </div>
-                            }
-                            <div>
-                                <strong>@item.User.Name @item.User.LastName</strong>
-                                <div class="text-muted small">@item.Question.Timestamp.ToString("dd.MM.yyyy HH:mm")</div>
+
+                                <!-- Sadržaj pitanja -->
+                                <h5 class="card-title">@item.Question.Title</h5>
+                                <p class="card-text">@item.Question.Description</p>
+
+                                @if (!string.IsNullOrEmpty(item.Question.ProblemPictureUrl))
+                                {
+                                    <div class="mb-3">
+                                        <img src="@item.Question.ProblemPictureUrl" alt="Problem Image" class="img-fluid" style="max-width: 100%; height: auto;">
+                                    </div>
+                                }
+
+                                <!-- Status pitanja i broj odgovora -->
+                                <div class="question-footer d-flex justify-content-between align-items-center">
+                                    <span class="answers-count text-primary" style="cursor: pointer;" onclick="openQuestionModal('@item.Question.RowKey')">
+                                        @if (item.AnswersCount == 0)
+                                        {
+                                            <text>Answer this question first!</text>
+                                        }
+                                        else
+                                        {
+                                            <text>@item.AnswersCount Answer@(item.AnswersCount == 1 ? "" : "s")</text>
+                                        }
+                                    </span>
+
+                                    @if (!string.IsNullOrEmpty(item.Question.BestAnswerId))
+                                    {
+                                        <span class="badge badge-success">✓ Closed</span>
+                                    }
+                                </div>
                             </div>
                         </div>
+                    }
+                }
+                else
+                {
+                    <p>No questions right now.</p>
+                }
+            </div>
+        </div>
 
-                        <!-- Sadržaj pitanja -->
-                        <h5 class="card-title">@item.Question.Title</h5>
-                        <p class="card-text">@item.Question.Description</p>
-
-                        @if (!string.IsNullOrEmpty(item.Question.ProblemPictureUrl))
-                        {
-                            <div class="mb-3">
-                                <img src="@item.Question.ProblemPictureUrl" alt="Problem Image" class="img-fluid" style="max-width: 100%; height: auto;">
-                            </div>
-                        }
-
-                        <!-- Status pitanja i broj odgovora -->
-                        <div class="question-footer d-flex justify-content-between align-items-center">
-                            <span class="answers-count text-primary" style="cursor: pointer;" onclick="openQuestionModal('@item.Question.RowKey')">
-                                @item.AnswersCount odgovor@(item.AnswersCount == 1 ? "" : "a")
-                            </span>
-
-                            @if (!string.IsNullOrEmpty(item.Question.BestAnswerId))
-                            {
-                                <span class="badge badge-success">✓ Zatvoreno</span>
-                            }
+        <!-- Modal za prikaz detalja pitanja -->
+        <div class="modal fade" id="questionModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Question details</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalContent">
+                            <!-- Sadržaj će biti učitan dinamički -->
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <style>
+            .question-box {
+                transition: box-shadow 0.3s ease;
             }
-        </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal za prikaz detalja pitanja -->
-<div class="modal fade" id="questionModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Detalji pitanja</h4>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="modalContent">
-                    <!-- Sadržaj će biti učitan dinamički -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                .question-box:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                }
 
-<style>
-    .question-box {
-        transition: box-shadow 0.3s ease;
-    }
+            .profile-picture {
+                border: 2px solid #dee2e6;
+            }
 
-        .question-box:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+            .answers-count:hover {
+                text-decoration: underline;
+            }
 
-    .profile-picture {
-        border: 2px solid #dee2e6;
-    }
+            .vote-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-right: 15px;
+            }
 
-    .answers-count:hover {
-        text-decoration: underline;
-    }
+            .vote-btn {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 5px;
+                color: #6c757d;
+            }
 
-    .vote-buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-right: 15px;
-    }
+                .vote-btn:hover {
+                    color: #007bff;
+                }
 
-    .vote-btn {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 5px;
-        color: #6c757d;
-    }
+                .vote-btn.active {
+                    color: #007bff;
+                }
 
-        .vote-btn:hover {
-            color: #007bff;
-        }
+            .answer-item {
+                border-bottom: 1px solid #dee2e6;
+                padding: 20px 0;
+            }
 
-        .vote-btn.active {
-            color: #007bff;
-        }
+                .answer-item:last-child {
+                    border-bottom: none;
+                }
 
-    .answer-item {
-        border-bottom: 1px solid #dee2e6;
-        padding: 20px 0;
-    }
+            .best-answer {
+                background-color: #d4edda;
+                border-left: 4px solid #28a745;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
 
-        .answer-item:last-child {
-            border-bottom: none;
-        }
+            .mark-best-btn {
+                color: #ffc107;
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+            }
 
-    .best-answer {
-        background-color: #d4edda;
-        border-left: 4px solid #28a745;
-        padding: 15px;
-        margin-bottom: 15px;
-    }
+                .mark-best-btn:hover {
+                    color: #e0a800;
+                }
 
-    .mark-best-btn {
-        color: #ffc107;
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-    }
+            .marked-best {
+                color: #28a745;
+            }
+        </style>
 
-        .mark-best-btn:hover {
-            color: #e0a800;
-        }
-
-    .marked-best {
-        color: #28a745;
-    }
-</style>
-
-<script>
+        <script>
 $(document).ready(function() {
-    console.log("Document ready fired"); // DODAJ OVO
-
     $('#questionForm').submit(function(e) {
-        console.log("Submit handler called"); // DODAJ OVO
         e.preventDefault();
-
-        console.log("preventDefault called"); // DODAJ OVO
 
         var formData = new FormData(this);
 
@@ -221,7 +230,18 @@ $(document).ready(function() {
             }
         });
 
-        return false; // DODAJ OVO kao dodatnu zaštitu
+        return false; 
+    });
+
+    $(document).on('click', '.close, [data-dismiss="modal"]', function () {
+        $('#questionModal').modal('hide');
+    });
+
+    // Close na click van modal-a
+    $('#questionModal').on('click', function (e) {
+        if (e.target === this) {
+            $(this).modal('hide');
+        }
     });
 });
 
@@ -239,7 +259,7 @@ function openQuestionModal(questionId) {
             }
         },
         error: function() {
-            alert('Greška pri učitavanju detalja pitanja.');
+            alert('Error while loading question details.');
         }
     });
 }
@@ -266,7 +286,7 @@ function displayQuestionDetails(data) {
 
     content += '<div>';
     content += '<strong>' + questionUser.Name + ' ' + questionUser.LastName + '</strong>';
-    content += '<div class="text-muted small">' + new Date(question.Timestamp).toLocaleString() + '</div>';
+    content += '<div class="text-muted small">' + question.FormattedTimestamp + '</div>';
     content += '</div>';
     content += '</div>';
 
@@ -284,29 +304,34 @@ function displayQuestionDetails(data) {
     content += '<hr>';
 
     // Forma za novi odgovor (samo ako pitanje nije zatvoreno)
-    if (@ViewBag.IsLoggedIn.ToString().ToLower() == "true" && !isQuestionClosed) {
-        content += '<div class="answer-form mb-4">';
-        content += '<h6>Vaš odgovor:</h6>';
-        content += '<form id="answerForm">';
-        content += '<div class="form-group">';
-        content += '<textarea class="form-control" id="answerBody" name="answerBody" rows="3" placeholder="Unesite vaš odgovor..." required></textarea>';
-        content += '</div>';
-        content += '<button type="submit" class="btn btn-success">Pošalji odgovor</button>';
-        content += '</form>';
-        content += '</div>';
-        content += '<hr>';
-    } else if (isQuestionClosed) {
-        content += '<div class="alert alert-info">';
-        content += '<strong>Pitanje je zatvoreno</strong> - odabran je najbolji odgovor.';
-        content += '</div>';
-    }
+  var isLoggedIn = @Json.Encode(ViewBag.IsLoggedIn);
+if (isLoggedIn && !isQuestionClosed) {
+    content += '<div class="answer-form mb-4">';
+    content += '<h6>Your answer:</h6>';
+    content += '<form id="answerForm">';
+    content += '<div class="form-group">';
+    content += '<textarea class="form-control" id="answerBody" name="answerBody" rows="3" placeholder="Unesite vaš odgovor..." required></textarea>';
+    content += '</div>';
+    content += '<button type="submit" class="btn btn-success">Answer</button>';
+    content += '</form>';
+    content += '</div>';
+    content += '<hr>';
+} else if (isQuestionClosed) {
+    content += '<div class="alert alert-info">';
+    content += '<strong>Question is closed!</strong> - best answer found.';
+    content += '</div>';
+} else if (!isLoggedIn) {
+    content += '<div class="alert alert-warning">';
+    content += '<strong>Log in</strong> so you can answer this question.';
+    content += '</div>';
+}
 
     // Prikaz odgovora
     content += '<div class="answers-section">';
-    content += '<h6>Odgovori (' + answers.length + '):</h6>';
+    content += '<h6>Answers (' + answers.length + '):</h6>';
 
     if (answers.length === 0) {
-        content += '<p class="text-muted">Nema odgovora na ovo pitanje.</p>';
+        content += '<p class="text-muted">There are no answers for this question yet.</p>';
     } else {
         answers.forEach(function(answerData) {
             var answer = answerData.Answer;
@@ -319,13 +344,13 @@ function displayQuestionDetails(data) {
             content += '<div class="' + answerClass + '">';
 
             if (isBestAnswer) {
-                content += '<div class="text-success mb-2"><strong>✓ Najbolji odgovor</strong></div>';
+                content += '<div class="text-success mb-2"><strong>✓ Best answer</strong></div>';
             }
 
             content += '<div class="d-flex">';
 
             // Vote buttons (samo za ulogovane korisnike)
-            if (@ViewBag.IsLoggedIn.ToString().ToLower() == "true" && !isQuestionClosed) {
+            if (isLoggedIn) {
                 content += '<div class="vote-buttons">';
                 content += '<button class="vote-btn ' + (userVote === 1 ? 'active' : '') + '" onclick="voteAnswer(\'' + answer.RowKey + '\', 1)" ' + (userVote !== 0 ? 'disabled' : '') + '>▲</button>';
                 content += '<span class="vote-score">' + score + '</span>';
@@ -348,7 +373,7 @@ function displayQuestionDetails(data) {
 
             content += '<div>';
             content += '<strong>' + user.Name + ' ' + user.LastName + '</strong>';
-            content += '<div class="text-muted small">' + new Date(answer.Timestamp).toLocaleString() + '</div>';
+            content += '<div class="text-muted small">' + answer.FormattedTimestamp + '</div>';
             content += '</div>';
 
             // Best answer button (samo za autora pitanja)
@@ -397,7 +422,7 @@ function submitAnswer(questionId) {
             }
         },
         error: function() {
-            alert('Greška pri slanju odgovora.');
+            alert('Error while sending answer.');
         }
     });
 }
@@ -424,7 +449,7 @@ function voteAnswer(answerId, voteValue) {
             }
         },
         error: function() {
-            alert('Greška pri glasanju.');
+            alert('Error while voting.');
         }
     });
 }
@@ -447,8 +472,8 @@ function markBestAnswer(questionId, answerId) {
             }
         },
         error: function() {
-            alert('Greška pri označavanju najboljeg odgovora.');
+            alert('Error while setting best answer.');
         }
     });
 }
-</script>
+        </script>
