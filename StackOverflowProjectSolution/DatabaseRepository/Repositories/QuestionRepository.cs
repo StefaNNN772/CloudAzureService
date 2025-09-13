@@ -34,5 +34,31 @@ namespace DatabaseRepository.Repositories
             TableOperation insertOperation = TableOperation.Insert(question);
             _table.Execute(insertOperation);
         }
+
+        public void UpdateQuestion(Question question)
+        {
+            try
+            {
+                TableOperation updateOperation = TableOperation.Replace(question);
+                _table.Execute(updateOperation);
+            }
+            catch (StorageException ex)
+            {
+                if (ex.RequestInformation.HttpStatusCode == 412)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Concurrent update detected for question {question.RowKey}");
+                    throw new Exception("Someone else modified this question. Please refresh and try again.", ex);
+                }
+                throw new Exception("Error updating question: " + ex.Message, ex);
+            }
+        }
+
+        public Question GetQuestionByRowKey(string rowKey)
+        {
+            var result = (from g in _table.CreateQuery<Question>()
+                          where g.PartitionKey == "Question" && g.RowKey == rowKey
+                          select g).FirstOrDefault();
+            return result;
+        }
     }
 }

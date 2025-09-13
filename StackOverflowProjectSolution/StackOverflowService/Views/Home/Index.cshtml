@@ -1,49 +1,479 @@
-﻿@{
-    ViewBag.Title = "Početna stranica";
+﻿@model List<StackOverflowService.Models.QuestionModel>
+
+@{
+    ViewBag.Title = "StackOverflow Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="jumbotron">
-    <h1>StackOverflow aplikacija</h1>
-    <p class="lead">Dobrodošli na StackOverflow aplikaciju! Ovde možete postavljati pitanja i odgovore iz oblasti programiranja.</p>
-    <p>
-        <a href="@Url.Action("Index", "Questions")" class="btn btn-primary btn-lg">
-            <i class="fas fa-question-circle mr-2"></i>Pregledaj pitanja
-        </a>
-    </p>
-</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>StackOverflow</h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Postavite pitanje</h2>
-        <p>Imate problem sa kodom? Postavite pitanje i dobićete pomoć od zajednice.</p>
-        <p>
-            <a href="@Url.Action("Create", "Questions")" class="btn btn-outline-primary">
-                <i class="fas fa-plus mr-2"></i>Novo pitanje
-            </a>
-        </p>
-    </div>
-    <div class="col-md-4">
-        <h2>Odgovorite na pitanja</h2>
-        <p>Pomozite drugima tako što ćete odgovoriti na njihova pitanja i deliti svoje znanje.</p>
-        <p>
-            <a href="@Url.Action("Index", "Questions")" class="btn btn-outline-primary">
-                <i class="fas fa-comments mr-2"></i>Sva pitanja
-            </a>
-        </p>
-    </div>
-    <div class="col-md-4">
-        <h2>Glasajte i zaradite reputaciju</h2>
-        <p>Glasajte za dobre odgovore i zaradite reputaciju kada vaši odgovori budu prihvaćeni.</p>
-        <p>
-            <a href="@Url.Action("Index", "User")" class="btn btn-outline-primary">
-                <i class="fas fa-user mr-2"></i>Moj profil
-            </a>
-        </p>
-    </div>
-</div>
+            @if (ViewBag.IsLoggedIn)
+            {
+                <!-- Forma za postavljanje pitanja -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Postavi novo pitanje</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="questionForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="questionTitle">Question title:</label>
+                                <input type="text" class="form-control" id="questionTitle" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="questionDescription">Description:</label>
+                                <textarea class="form-control" id="questionDescription" name="description" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="problemImage">Image for the problem (optional):</label>
+                                <input type="file" class="form-control-file" id="problemImage" name="problemImage" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ask the question!</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <strong>Log in</strong> so you can ask and answer question.
+                </div>
+            }
 
-<div class="alert alert-info mt-4">
-    <h4>Informacije o sesiji</h4>
-    <p>Session ID: @Session.SessionID</p>
-    <p>Korisnik: @(Session["CurrentUser"] ?? "Nije prijavljen")</p>
-</div>
+            <!-- Lista pitanja -->
+            <div class="questions-list">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="question-box card mb-3" data-question-id="@item.Question.RowKey">
+                            <div class="card-body">
+                                <!-- Informacije o korisniku -->
+                                <div class="user-info d-flex align-items-center mb-3">
+                                    @if (!string.IsNullOrEmpty(item.User.PictureUrl))
+                                    {
+                                        <img src="@item.User.PictureUrl" alt="Profile Picture" class="profile-picture rounded-circle mr-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="profile-picture rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: #007bff; color: white; font-weight: bold;">
+                                            @item.User.Name.Substring(0, 1).ToUpper()
+                                        </div>
+                                    }
+                                    <div>
+                                        <strong>@item.User.Name @item.User.LastName</strong>
+                                        <div class="text-muted small">@item.Question.Timestamp.ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
+                                </div>
+
+                                <!-- Sadržaj pitanja -->
+                                <h5 class="card-title">@item.Question.Title</h5>
+                                <p class="card-text">@item.Question.Description</p>
+
+                                @if (!string.IsNullOrEmpty(item.Question.ProblemPictureUrl))
+                                {
+                                    <div class="mb-3">
+                                        <img src="@item.Question.ProblemPictureUrl" alt="Problem Image" class="img-fluid" style="max-width: 100%; height: auto;">
+                                    </div>
+                                }
+
+                                <!-- Status pitanja i broj odgovora -->
+                                <div class="question-footer d-flex justify-content-between align-items-center">
+                                    <span class="answers-count text-primary" style="cursor: pointer;" onclick="openQuestionModal('@item.Question.RowKey')">
+                                        @if (item.AnswersCount == 0)
+                                        {
+                                            <text>Answer this question first!</text>
+                                        }
+                                        else
+                                        {
+                                            <text>@item.AnswersCount Answer@(item.AnswersCount == 1 ? "" : "s")</text>
+                                        }
+                                    </span>
+
+                                    @if (!string.IsNullOrEmpty(item.Question.BestAnswerId))
+                                    {
+                                        <span class="badge badge-success">✓ Closed</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No questions right now.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Modal za prikaz detalja pitanja -->
+        <div class="modal fade" id="questionModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Question details</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalContent">
+                            <!-- Sadržaj će biti učitan dinamički -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .question-box {
+                transition: box-shadow 0.3s ease;
+            }
+
+                .question-box:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                }
+
+            .profile-picture {
+                border: 2px solid #dee2e6;
+            }
+
+            .answers-count:hover {
+                text-decoration: underline;
+            }
+
+            .vote-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-right: 15px;
+            }
+
+            .vote-btn {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 5px;
+                color: #6c757d;
+            }
+
+                .vote-btn:hover {
+                    color: #007bff;
+                }
+
+                .vote-btn.active {
+                    color: #007bff;
+                }
+
+            .answer-item {
+                border-bottom: 1px solid #dee2e6;
+                padding: 20px 0;
+            }
+
+                .answer-item:last-child {
+                    border-bottom: none;
+                }
+
+            .best-answer {
+                background-color: #d4edda;
+                border-left: 4px solid #28a745;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .mark-best-btn {
+                color: #ffc107;
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+                .mark-best-btn:hover {
+                    color: #e0a800;
+                }
+
+            .marked-best {
+                color: #28a745;
+            }
+        </style>
+
+        <script>
+$(document).ready(function() {
+    $('#questionForm').submit(function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/Home/CreateQuestion',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log("Success:", response);
+                if (response.success) {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("Error:", xhr.responseText);
+                alert('Greška pri slanju zahteva.');
+            }
+        });
+
+        return false; 
+    });
+
+    $(document).on('click', '.close, [data-dismiss="modal"]', function () {
+        $('#questionModal').modal('hide');
+    });
+
+    // Close na click van modal-a
+    $('#questionModal').on('click', function (e) {
+        if (e.target === this) {
+            $(this).modal('hide');
+        }
+    });
+});
+
+function openQuestionModal(questionId) {
+    $.ajax({
+        url: '@Url.Action("GetQuestionDetails", "Home")',
+        type: 'GET',
+        data: { questionId: questionId },
+        success: function(response) {
+            if (response.success) {
+                displayQuestionDetails(response);
+                $('#questionModal').modal('show');
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('Error while loading question details.');
+        }
+    });
+}
+
+function displayQuestionDetails(data) {
+    var content = '';
+    var question = data.question;
+    var questionUser = data.questionUser;
+    var answers = data.answers;
+    var canMarkBest = data.canMarkBest;
+    var isQuestionClosed = data.isQuestionClosed;
+
+    // Prikaz pitanja
+    content += '<div class="question-details">';
+    content += '<div class="user-info d-flex align-items-center mb-3">';
+
+    if (questionUser.PictureUrl) {
+        content += '<img src="' + questionUser.PictureUrl + '" alt="Profile Picture" class="profile-picture rounded-circle mr-3" style="width: 50px; height: 50px; object-fit: cover;">';
+    } else {
+        content += '<div class="profile-picture rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: #007bff; color: white; font-weight: bold;">';
+        content += questionUser.Name.charAt(0).toUpperCase();
+        content += '</div>';
+    }
+
+    content += '<div>';
+    content += '<strong>' + questionUser.Name + ' ' + questionUser.LastName + '</strong>';
+    content += '<div class="text-muted small">' + question.FormattedTimestamp + '</div>';
+    content += '</div>';
+    content += '</div>';
+
+    content += '<h5>' + question.Title + '</h5>';
+    content += '<p>' + question.Description + '</p>';
+
+    if (question.ProblemPictureUrl) {
+        content += '<div class="mb-3">';
+        content += '<img src="' + question.ProblemPictureUrl + '" alt="Problem Image" class="img-fluid" style="max-width: 100%; height: auto;">';
+        content += '</div>';
+    }
+
+    content += '</div>';
+
+    content += '<hr>';
+
+    // Forma za novi odgovor (samo ako pitanje nije zatvoreno)
+  var isLoggedIn = @Json.Encode(ViewBag.IsLoggedIn);
+if (isLoggedIn && !isQuestionClosed) {
+    content += '<div class="answer-form mb-4">';
+    content += '<h6>Your answer:</h6>';
+    content += '<form id="answerForm">';
+    content += '<div class="form-group">';
+    content += '<textarea class="form-control" id="answerBody" name="answerBody" rows="3" placeholder="Unesite vaš odgovor..." required></textarea>';
+    content += '</div>';
+    content += '<button type="submit" class="btn btn-success">Answer</button>';
+    content += '</form>';
+    content += '</div>';
+    content += '<hr>';
+} else if (isQuestionClosed) {
+    content += '<div class="alert alert-info">';
+    content += '<strong>Question is closed!</strong> - best answer found.';
+    content += '</div>';
+} else if (!isLoggedIn) {
+    content += '<div class="alert alert-warning">';
+    content += '<strong>Log in</strong> so you can answer this question.';
+    content += '</div>';
+}
+
+    // Prikaz odgovora
+    content += '<div class="answers-section">';
+    content += '<h6>Answers (' + answers.length + '):</h6>';
+
+    if (answers.length === 0) {
+        content += '<p class="text-muted">There are no answers for this question yet.</p>';
+    } else {
+        answers.forEach(function(answerData) {
+            var answer = answerData.Answer;
+            var user = answerData.User;
+            var score = answerData.Score;
+            var userVote = answerData.UserVote;
+            var isBestAnswer = answerData.IsBestAnswer;
+
+            var answerClass = isBestAnswer ? 'answer-item best-answer' : 'answer-item';
+            content += '<div class="' + answerClass + '">';
+
+            if (isBestAnswer) {
+                content += '<div class="text-success mb-2"><strong>✓ Best answer</strong></div>';
+            }
+
+            content += '<div class="d-flex">';
+
+            // Vote buttons (samo za ulogovane korisnike)
+            if (isLoggedIn) {
+                content += '<div class="vote-buttons">';
+                content += '<button class="vote-btn ' + (userVote === 1 ? 'active' : '') + '" onclick="voteAnswer(\'' + answer.RowKey + '\', 1)" ' + (userVote !== 0 ? 'disabled' : '') + '>▲</button>';
+                content += '<span class="vote-score">' + score + '</span>';
+                content += '<button class="vote-btn ' + (userVote === -1 ? 'active' : '') + '" onclick="voteAnswer(\'' + answer.RowKey + '\', -1)" ' + (userVote !== 0 ? 'disabled' : '') + '>▼</button>';
+                content += '</div>';
+            }
+
+            content += '<div class="flex-grow-1">';
+
+            // User info
+            content += '<div class="user-info d-flex align-items-center mb-2">';
+
+            if (user.PictureUrl) {
+                content += '<img src="' + user.PictureUrl + '" alt="Profile Picture" class="profile-picture rounded-circle mr-2" style="width: 40px; height: 40px; object-fit: cover;">';
+            } else {
+                content += '<div class="profile-picture rounded-circle mr-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #007bff; color: white; font-weight: bold;">';
+                content += user.Name.charAt(0).toUpperCase();
+                content += '</div>';
+            }
+
+            content += '<div>';
+            content += '<strong>' + user.Name + ' ' + user.LastName + '</strong>';
+            content += '<div class="text-muted small">' + answer.FormattedTimestamp + '</div>';
+            content += '</div>';
+
+            // Best answer button (samo za autora pitanja)
+            if (canMarkBest && !isBestAnswer) {
+                content += '<button class="mark-best-btn ml-auto" onclick="markBestAnswer(\'' + question.RowKey + '\', \'' + answer.RowKey + '\')" title="Označi kao najbolji odgovor">★</button>';
+            } else if (isBestAnswer) {
+                content += '<span class="marked-best ml-auto" title="Najbolji odgovor">★</span>';
+            }
+
+            content += '</div>';
+
+            content += '<div>' + answer.Body + '</div>';
+            content += '</div>';
+            content += '</div>';
+            content += '</div>';
+        });
+    }
+
+    content += '</div>';
+
+    $('#modalContent').html(content);
+
+    // Event handler za formu odgovora
+    $('#answerForm').submit(function(e) {
+        e.preventDefault();
+        submitAnswer(question.RowKey);
+    });
+}
+
+function submitAnswer(questionId) {
+    var answerBody = $('#answerBody').val();
+
+    $.ajax({
+        url: '@Url.Action("SubmitAnswer", "Home")',
+        type: 'POST',
+        data: {
+            questionId: questionId,
+            answerBody: answerBody
+        },
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                openQuestionModal(questionId); // Osvežiti modal
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('Error while sending answer.');
+        }
+    });
+}
+
+function voteAnswer(answerId, voteValue) {
+    $.ajax({
+        url: '@Url.Action("VoteAnswer", "Home")',
+        type: 'POST',
+        data: {
+            answerId: answerId,
+            voteValue: voteValue
+        },
+        success: function(response) {
+            if (response.success) {
+                // Ažurirati score u UI
+                var scoreElement = $('button[onclick="voteAnswer(\'' + answerId + '\', 1)"]').siblings('.vote-score');
+                scoreElement.text(response.newScore);
+
+                // Disable vote buttons
+                $('button[onclick*="' + answerId + '"]').prop('disabled', true);
+                $('button[onclick="voteAnswer(\'' + answerId + '\', ' + voteValue + ')"]').addClass('active');
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('Error while voting.');
+        }
+    });
+}
+
+function markBestAnswer(questionId, answerId) {
+    $.ajax({
+        url: '@Url.Action("MarkBestAnswer", "Home")',
+        type: 'POST',
+        data: {
+            questionId: questionId,
+            answerId: answerId
+        },
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                openQuestionModal(questionId); // Osvežiti modal
+                location.reload(); // Osvežiti stranicu da se prikaže status zatvorenog pitanja
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('Error while setting best answer.');
+        }
+    });
+}
+        </script>
