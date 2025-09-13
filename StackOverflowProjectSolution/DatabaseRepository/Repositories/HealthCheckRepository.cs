@@ -24,7 +24,7 @@ namespace DatabaseRepository.Repositories
         }
         public IQueryable<HealthCheck> RetrieveAllHealthChecks()
         {
-            DateTime threshold = DateTime.UtcNow.AddHours(-3);
+            DateTime threshold = DateTime.Now.AddHours(-3);
 
             var results = from g in _table.CreateQuery<HealthCheck>()
                           where g.PartitionKey == "HealthCheck"
@@ -34,9 +34,25 @@ namespace DatabaseRepository.Repositories
         }
         public void AddHealthCheck(HealthCheck healthCheck)
         {
+            DateTime threshold = DateTime.UtcNow.AddHours(-5);
+
+
             // Samostalni rad: izmestiti tableName u konfiguraciju servisa.
             TableOperation insertOperation = TableOperation.Insert(healthCheck);
             _table.Execute(insertOperation);
+            
+            
+
+            var oldChecks = _table.CreateQuery<HealthCheck>()
+                          .Where(h => h.PartitionKey == "HealthCheck" && h.Date < threshold)
+                          .ToList();
+
+            // Delete old health checks
+            foreach (var oldCheck in oldChecks)
+            {
+                TableOperation deleteOperation = TableOperation.Delete(oldCheck);
+                _table.Execute(deleteOperation);
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace HealthStatusService.Controllers
             try
             {
                 // Retrieve all health checks from the last 3 hours
-                var healthChecks = _healthCheckRepository.RetrieveAllHealthChecks().ToList();
+                var healthChecks = _healthCheckRepository.RetrieveAllHealthChecks().OrderBy(h => h.Date).ToList();
 
                 // Optional: Log the count for debugging
                 System.Diagnostics.Debug.WriteLine($"Retrieved {healthChecks.Count} health checks");
@@ -46,7 +46,7 @@ namespace HealthStatusService.Controllers
         {
             try
             {
-                var healthChecks = _healthCheckRepository.RetrieveAllHealthChecks().ToList();
+                var healthChecks = _healthCheckRepository.RetrieveAllHealthChecks().OrderBy(h => h.Date).ToList();
 
                 var result = new
                 {

@@ -35,16 +35,16 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="HealthMonitoring" protocol="tcp" port="10100" />
-      <InputEndpoint name="AdminAlertEmails" protocol="tcp" port="10102" />
       <InternalEndpoint name="SendAlertEmails" protocol="tcp" />
+      <InputEndpoint name="AdminAlertEmails" protocol="tcp" port="10102" />
+      <InternalEndpoint name="HealthMonitoring" protocol="tcp" />
     </Endpoints>
   </WorkerRole>
   <WebRole name="HealthStatusService" vmsize="Standard_D1_v2">
     <Sites>
       <Site name="Web">
         <Bindings>
-          <Binding name="Endpoint1" endpointName="Endpoint1" />
+          <Binding name="Endpoint1" endpointName="HttpEndpoint" />
         </Bindings>
       </Site>
     </Sites>
@@ -53,7 +53,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="Endpoint1" protocol="http" port="10131" localPort="8082" />
+      <InputEndpoint name="HttpEndpoint" protocol="http" port="10131" localPort="8082" />
     </Endpoints>
   </WebRole>
 </ServiceDefinition>

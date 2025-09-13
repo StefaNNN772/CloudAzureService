@@ -14,7 +14,7 @@
     </ConfigurationSettings>
   </Role>
   <Role name="HealthMonitoringService">
-    <Instances count="1" />
+    <Instances count="2" />
     <ConfigurationSettings>
       <Setting name="AlertEmailsConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="HealthCheckConnectionString" value="UseDevelopmentStorage=true" />

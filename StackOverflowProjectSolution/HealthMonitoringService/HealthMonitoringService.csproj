@@ -119,7 +119,8 @@
     <Compile Include="AdminAlertEmailsServer.cs" />
     <Compile Include="JobServer.cs" />
     <Compile Include="JobServerProvider.cs" />
-    <Compile Include="NotifyAlertEmails.cs" />
+    <Compile Include="NotifyAlertEmailsPartialServer.cs" />
+    <Compile Include="NotifyAlertEmailsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniversalConnector\IServiceConnector.cs" />
     <Compile Include="UniversalConnector\ServiceConnector.cs" />

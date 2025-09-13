@@ -13,6 +13,7 @@ using HealthMonitoringContracts;
 using DatabaseRepository.Repositories;
 using DatabaseRepository.Models;
 using NotificationContracts;
+using System.ServiceModel;
 
 namespace HealthMonitoringService
 {
@@ -23,9 +24,12 @@ namespace HealthMonitoringService
         private readonly HealthCheckRepository _healthCheckRepository = new HealthCheckRepository();
         private readonly AlertEmailsRepository _alertEmailsRepository = new AlertEmailsRepository();
 
-        private NotifyAlertEmails notifyAlertEmails = new NotifyAlertEmails();
-        private JobServer jobServer = new JobServer();
+        private NotifyAlertEmailsPartialServer notifyAlertEmails = new NotifyAlertEmailsPartialServer();
+        //private JobServer jobServer = new JobServer();
         private AdminAlertEmailsServer aaeServer = new AdminAlertEmailsServer();
+
+        private bool isAliveSO ;
+        private bool isAliveNO ;
         
         public override void Run()
         {
@@ -60,8 +64,9 @@ namespace HealthMonitoringService
 
             bool result = base.OnStart();
 
-            jobServer.Open();
+            //jobServer.Open();
             aaeServer.Open();
+            notifyAlertEmails.Open();
 
             Trace.TraceInformation("HealthMonitoringService has been started");
 
@@ -77,10 +82,27 @@ namespace HealthMonitoringService
 
             base.OnStop();
 
-            jobServer.Close();
+            //jobServer.Close();
             aaeServer.Close();
+            notifyAlertEmails.Close();
 
             Trace.TraceInformation("HealthMonitoringService has stopped");
+        }
+
+        private List<EndpointAddress> ConnectToInternalServices(NetTcpBinding binding,string internalEndpointName)
+        {
+            
+            var currentRoleInstanceId = RoleEnvironment.CurrentRoleInstance.Id;
+            var internalEndpoints = new List<EndpointAddress>();
+
+            foreach(var roleInstance in RoleEnvironment.Roles[RoleEnvironment.CurrentRoleInstance.Role.Name].Instances)
+            {
+                if(currentRoleInstanceId != roleInstance.Id)
+                {
+                    internalEndpoints.Add(new EndpointAddress(string.Format("net.tcp://{0}/{1}", roleInstance.InstanceEndpoints[internalEndpointName].IPEndpoint.ToString(), internalEndpointName)));
+                }
+            }
+            return internalEndpoints;
         }
 
         private async Task RunAsync(CancellationToken cancellationToken)
@@ -96,9 +118,10 @@ namespace HealthMonitoringService
             serviceNotificationConnector.Connect("net.tcp://localhost:10103/HealthMonitoring");
             IHealthMonitoring healthMonitoringNotificationService = serviceNotificationConnector.GetProxy();
 
-            ServiceConnector<INotification> serviceConnectorSendEmails = new ServiceConnector<INotification>();
-            serviceConnector.Connect("net.tcp://localhost:10101/EmailNotify");
-            INotification sendEmailsService = serviceConnectorSendEmails.GetProxy();
+            NetTcpBinding binding = new NetTcpBinding();
+            List<EndpointAddress> internalEndpoints = ConnectToInternalServices(binding,"SendAlertEmails");
+            INotifyAlertEmails sendEmailsProxy = (new ChannelFactory<INotifyAlertEmails>(binding, internalEndpoints[0])).CreateChannel();
+
 
             List<AlertEmails> emails = _alertEmailsRepository.GetAllAlertEmails().ToList();
             List<string> emailsString = new List<string>();
@@ -114,27 +137,32 @@ namespace HealthMonitoringService
                 {
                     try
                     {
-                        bool isAliveSO = healthMonitoringStackOverflowService.CheckServices();
+
+                        isAliveSO = healthMonitoringStackOverflowService.CheckServices();
                         Trace.TraceInformation(isAliveSO ? "StackOverflowService ok" : "StackOverflowService not_ok");
+
+                        DateTime utcNow = DateTime.UtcNow;
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+                        DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(utcNow, tz);
 
                         string rowKey = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
                         HealthCheck healthCheckSO = new HealthCheck(rowKey);
 
-                        healthCheckSO.Date = DateTime.UtcNow;
+                        healthCheckSO.Date = DateTime.Now;
                         healthCheckSO.ServiceName = "StackOverflowService";
                         healthCheckSO.Status = isAliveSO ? "ok" : "not_ok";
 
                         _healthCheckRepository.AddHealthCheck(healthCheckSO);
 
-                        bool isAliveNotification = healthMonitoringNotificationService.CheckServices();
-                        Trace.TraceInformation(isAliveNotification ? "NotificationService ok" : "NotificationService not_ok");
+                         isAliveNO = healthMonitoringNotificationService.CheckServices();
+                        Trace.TraceInformation(isAliveNO ? "NotificationService ok" : "NotificationService not_ok");
 
                         rowKey = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
                         HealthCheck healthCheckNO = new HealthCheck(rowKey);
 
-                        healthCheckNO.Date = DateTime.UtcNow;
+                        healthCheckNO.Date = DateTime.Now;
                         healthCheckNO.ServiceName = "NotificationService";
-                        healthCheckNO.Status = isAliveNotification ? "ok" : "not_ok";
+                        healthCheckNO.Status = isAliveNO ? "ok" : "not_ok";
 
                         _healthCheckRepository.AddHealthCheck(healthCheckNO);
 
@@ -143,10 +171,39 @@ namespace HealthMonitoringService
                     }
                     catch (Exception ex)
                     {
+
+                        string rowKey = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+                        HealthCheck healthCheck = new HealthCheck(rowKey);
+
+                        DateTime utcNow = DateTime.UtcNow;
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+                        DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(utcNow, tz);
+
+
+                        if (!isAliveSO)
+                        {
+                            Trace.TraceInformation("StackOverflowService not_ok");
+
+
+                            healthCheck.Date = DateTime.Now;
+                            healthCheck.ServiceName = "StackOverflowService";
+                            healthCheck.Status = "not_ok";
+
+                        }
+                        else
+                        {
+                            Trace.TraceInformation( "NotificationService not_ok");
+
+                            healthCheck.Date = DateTime.Now;
+                            healthCheck.ServiceName = "NotificationService";
+                            healthCheck.Status =  "not_ok";
+                        }
+                         _healthCheckRepository.AddHealthCheck(healthCheck);
+
                         string message = $"not_ok - {ex.Message}";
                         Trace.TraceError(message);
-                        
-                       await notifyAlertEmails.SendEmailsAsync(emailsString, message);
+
+                        await sendEmailsProxy.SendEmailsAsync(emailsString, message);
                         
                     }
 
@@ -155,13 +212,13 @@ namespace HealthMonitoringService
             }, cancellationToken);
 
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Trace.TraceInformation("Working");
+            //while (!cancellationToken.IsCancellationRequested)
+            //{
+            //    Trace.TraceInformation("Working");
                 
 
-                await Task.Delay(1000);
-            }
+            //    await Task.Delay(1000);
+            //}
         }
     }
 }
