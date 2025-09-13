@@ -9,12 +9,19 @@ namespace StackOverflowService
 {
     public class WebRole : RoleEntryPoint
     {
+        private HealthManager hmServer = new HealthManager();
         public override bool OnStart()
         {
             // For information on handling configuration changes
             // see the MSDN topic at https://go.microsoft.com/fwlink/?LinkId=166357.
 
-            return base.OnStart();
+            bool result =  base.OnStart();
+
+            hmServer.Open();
+            Console.WriteLine("\n\nHealthManager open!\n\n");
+            
+
+            return result;
         }
     }
 }

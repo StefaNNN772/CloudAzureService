@@ -15,8 +15,11 @@ namespace StackOverflowService
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+
         protected void Application_Start()
         {
+          
+
             AreaRegistration.RegisterAllAreas();
             InitBlobs();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
@@ -25,6 +28,7 @@ namespace StackOverflowService
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             GlobalFilters.Filters.Add(new SessionTimeoutFilter());
+
         }
 
         public void InitBlobs()

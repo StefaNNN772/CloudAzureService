@@ -17,6 +17,7 @@ namespace NotificationService
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
         private JobServer jobServer = new JobServer();
+        private HealthMonitoring hmServer = new HealthMonitoring();
 
         public override void Run()
         {
@@ -43,8 +44,11 @@ namespace NotificationService
             // For information on handling configuration changes
             // see the MSDN topic at https://go.microsoft.com/fwlink/?LinkId=166357.
 
+            Thread.Sleep(60000); 
+
             bool result = base.OnStart();
             jobServer.Open();
+            hmServer.Open();
 
             Trace.TraceInformation("NotificationService has been started");
 
@@ -60,6 +64,7 @@ namespace NotificationService
 
             base.OnStop();
             jobServer.Close();
+            hmServer.Close();
 
             Trace.TraceInformation("NotificationService has stopped");
         }

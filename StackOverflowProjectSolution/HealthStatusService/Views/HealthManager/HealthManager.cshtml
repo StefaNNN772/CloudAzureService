@@ -1,0 +1,412 @@
+﻿@model List<DatabaseRepository.Models.HealthCheck>
+@{
+    ViewBag.Title = "Health Manager";
+
+    var stackOverflowChecks = Model.Where(h => h.ServiceName == "StackOverflowService").OrderBy(h => h.Date).ToList();
+    var notificationChecks = Model.Where(h => h.ServiceName == "NotificationService").OrderBy(h => h.Date).ToList();
+
+    // Calculate availability percentages (assuming 3 hours = 180 minutes)
+    var stackOverflowOkCount = stackOverflowChecks.Count(h => h.Status == "ok");
+    var stackOverflowTotalCount = stackOverflowChecks.Count();
+    var stackOverflowAvailability = stackOverflowTotalCount > 0 ? (double)stackOverflowOkCount / stackOverflowTotalCount * 100 : 0;
+
+    var notificationOkCount = notificationChecks.Count(h => h.Status == "ok");
+    var notificationTotalCount = notificationChecks.Count();
+    var notificationAvailability = notificationTotalCount > 0 ? (double)notificationOkCount / notificationTotalCount * 100 : 0;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4><i class="fas fa-heartbeat mr-2"></i>Health Manager Dashboard</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- Service Graphs Section -->
+                    <div class="row mb-4">
+                        <!-- StackOverflow Service Graph -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5><i class="fas fa-server mr-2"></i>StackOverflow Service</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="stackOverflowChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Service Graph -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-warning text-white">
+                                    <h5><i class="fas fa-bell mr-2"></i>Notification Service</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="notificationChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Availability Statistics -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-info">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">StackOverflow Service Availability</h5>
+                                    <h2 class="text-info">@stackOverflowAvailability.ToString("F1")%</h2>
+                                    <p class="card-text">
+                                        <span class="text-success">@stackOverflowOkCount OK</span> /
+                                        <span class="text-danger">@(stackOverflowTotalCount - stackOverflowOkCount) Failed</span>
+                                        out of @stackOverflowTotalCount checks
+                                    </p>
+                                    <small class="text-muted">Over the last 3 hours</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Notification Service Availability</h5>
+                                    <h2 class="text-warning">@notificationAvailability.ToString("F1")%</h2>
+                                    <p class="card-text">
+                                        <span class="text-success">@notificationOkCount OK</span> /
+                                        <span class="text-danger">@(notificationTotalCount - notificationOkCount) Failed</span>
+                                        out of @notificationTotalCount checks
+                                    </p>
+                                    <small class="text-muted">Over the last 3 hours</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Status Table -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Last 20 Health Checks</h4>
+                            <table class="table table-striped table-bordered" id="healthCheckTable">
+                                <thead>
+                                    <tr>
+                                        <th>Service Name</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Redovi će biti dinamički popunjeni preko JS-a -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card-header h4, .card-header h5 {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            border-top: none;
+        }
+
+        .badge {
+            font-size: 0.8em;
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        .card-body h2 {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var stackOverflowChart;
+            var notificationChart;
+
+            function loadData() {
+                $.getJSON('@Url.Action("GetHealthCheckData", "HealthManager")', function (result) {
+                    if (result.success) {
+                        var data = result.data;
+
+                        // --- GRAFICI ---
+                        var stackOverflowData = data.filter(d => d.serviceName === "StackOverflowService").map(d => ({
+                            ...d,
+                            time: d.date.split(' ')[1]  // uzima samo HH:mm:ss
+                        }));;
+                        var notificationData = data.filter(d => d.serviceName === "NotificationService").map(d => ({
+                            ...d,
+                            time: d.date.split(' ')[1]  // uzima samo HH:mm:ss
+                        }));;
+
+                        var stackOverflowLabels = stackOverflowData.map(d => d.time);
+                        var stackOverflowStatus = stackOverflowData.map(d => d.status === "ok" ? 1 : 0);
+
+                        var notificationLabels = notificationData.map(d => d.time);
+                        var notificationStatus = notificationData.map(d => d.status === "ok" ? 1 : 0);
+
+                        if (stackOverflowChart) {
+                            stackOverflowChart.data.labels = stackOverflowLabels;
+                            stackOverflowChart.data.datasets[0].data = stackOverflowStatus;
+                            stackOverflowChart.update();
+                        } else {
+                            var ctx1 = document.getElementById('stackOverflowChart').getContext('2d');
+                            stackOverflowChart = new Chart(ctx1, {
+                                type: 'line',
+                                data: {
+                                    labels: stackOverflowLabels,
+                                    datasets: [{
+                                        label: 'StackOverflow Service',
+                                        data: stackOverflowStatus,
+                                        backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                                        borderColor: 'rgba(23, 162, 184, 1)',
+                                        borderWidth: 3,
+                                        fill: true,
+                                        stepped: true,
+                                        pointBackgroundColor: ctx => ctx.parsed.y === 1 ? '#28a745' : '#dc3545',
+                                        pointBorderColor: ctx => ctx.parsed.y === 1 ? '#28a745' : '#dc3545',
+                                        pointRadius: 6
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: { legend: { display: false } },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 1,
+                                            ticks: {
+                                                stepSize: 1,
+                                                callback: v => v === 1 ? 'OK' : 'NOT OK'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        if (notificationChart) {
+                            notificationChart.data.labels = notificationLabels;
+                            notificationChart.data.datasets[0].data = notificationStatus;
+                            notificationChart.update();
+                        } else {
+                            var ctx2 = document.getElementById('notificationChart').getContext('2d');
+                            notificationChart = new Chart(ctx2, {
+                                type: 'line',
+                                data: {
+                                    labels: notificationLabels,
+                                    datasets: [{
+                                        label: 'Notification Service',
+                                        data: notificationStatus,
+                                        backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                                        borderColor: 'rgba(255, 193, 7, 1)',
+                                        borderWidth: 3,
+                                        fill: true,
+                                        stepped: true,
+                                        pointBackgroundColor: ctx => ctx.parsed.y === 1 ? '#28a745' : '#dc3545',
+                                        pointBorderColor: ctx => ctx.parsed.y === 1 ? '#28a745' : '#dc3545',
+                                        pointRadius: 6
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: { legend: { display: false } },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 1,
+                                            ticks: {
+                                                stepSize: 1,
+                                                callback: v => v === 1 ? 'OK' : 'NOT OK'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // --- TABELA ---
+                        var tableBody = $("#healthCheckTable tbody");
+                        tableBody.empty();
+
+                        // Poslednjih 20 (sortiraj po datumu desc)
+                        var last20 = data
+                            .sort((a, b) => new Date(b.date) - new Date(a.date))
+                            .slice(0, 20);
+
+                        last20.forEach(d => {
+                            var statusBadge = d.status === "ok"
+                                ? '<span class="badge bg-success">OK</span>'
+                                : '<span class="badge bg-danger">NOT OK</span>';
+
+                            var row = `<tr>
+                                <td>${d.serviceName}</td>
+                                <td>${statusBadge}</td>
+                                <td>${new Date(d.date).toLocaleString()}</td>
+                            </tr>`;
+
+                            tableBody.append(row);
+                        });
+                    }
+                });
+            }
+
+            // Prvo učitavanje
+            loadData();
+
+            // Osvježavaj svakih 10 sekundi
+            setInterval(loadData, 10000);
+        });
+    </script>
+}
+
+
+@*@section Scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                // StackOverflow Service Chart Data
+                var stackOverflowData = [
+                    @Html.Raw(string.Join(",", stackOverflowChecks.Select(h => "'" + h.Date.ToString("HH:mm") + "'")))
+                ];
+                var stackOverflowStatus = [
+                    @Html.Raw(string.Join(",", stackOverflowChecks.Select(h => h.Status == "ok" ? "1" : "0")))
+                ];
+
+                // Notification Service Chart Data
+                var notificationData = [
+                    @Html.Raw(string.Join(",", notificationChecks.Select(h => "'" + h.Date.ToString("HH:mm") + "'")))
+                ];
+                var notificationStatus = [
+                    @Html.Raw(string.Join(",", notificationChecks.Select(h => h.Status == "ok" ? "1" : "0")))
+                ];
+
+                // StackOverflow Service Chart
+                var stackOverflowCtx = document.getElementById('stackOverflowChart').getContext('2d');
+                var stackOverflowChart = new Chart(stackOverflowCtx, {
+                    type: 'line',
+                    data: {
+                        labels: stackOverflowData,
+                        datasets: [{
+                            label: 'Service Status',
+                            data: stackOverflowStatus,
+                            backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                            borderColor: 'rgba(23, 162, 184, 1)',
+                            borderWidth: 3,
+                            fill: true,
+                            stepped: true,
+                            pointBackgroundColor: function(context) {
+                                return context.parsed.y === 1 ? '#28a745' : '#dc3545';
+                            },
+                            pointBorderColor: function(context) {
+                                return context.parsed.y === 1 ? '#28a745' : '#dc3545';
+                            },
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Service Health Over Time'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 1,
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value) {
+                                        return value === 1 ? 'OK' : 'NOT OK';
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Notification Service Chart
+                var notificationCtx = document.getElementById('notificationChart').getContext('2d');
+                var notificationChart = new Chart(notificationCtx, {
+                    type: 'line',
+                    data: {
+                        labels: notificationData,
+                        datasets: [{
+                            label: 'Service Status',
+                            data: notificationStatus,
+                            backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            borderWidth: 3,
+                            fill: true,
+                            stepped: true,
+                            pointBackgroundColor: function(context) {
+                                return context.parsed.y === 1 ? '#28a745' : '#dc3545';
+                            },
+                            pointBorderColor: function(context) {
+                                return context.parsed.y === 1 ? '#28a745' : '#dc3545';
+                            },
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Service Health Over Time'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 1,
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value) {
+                                        return value === 1 ? 'OK' : 'NOT OK';
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    }*@

@@ -13,7 +13,7 @@ namespace AdminToolsConsoleApp
     {
         static void Main(string[] args)
         {
-            // Connect to the student service
+            // Connect to the service
             ServiceConnector<IAdminAlertEmails> serviceConnector = new ServiceConnector<IAdminAlertEmails>();
             serviceConnector.Connect("net.tcp://localhost:10102/AdminAlertEmails");
             IAdminAlertEmails emailService = serviceConnector.GetProxy();
