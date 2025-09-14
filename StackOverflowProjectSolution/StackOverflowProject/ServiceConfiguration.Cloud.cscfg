@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="StackOverflowProject" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="6" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="StackOverflowService">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="DataConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="NotificationService">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="HealthMonitoringService">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="AlertEmailsConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="HealthCheckConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="HealthStatusService">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="HealthCheckConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+  </Role>
+  <NetworkConfiguration>
+    <VirtualNetworkSite name="stackoverflowprojectVNet" />
+    <AddressAssignments>
+      <InstanceAddress roleName="StackOverflowService">
+        <Subnets>
+          <Subnet name="WebTier" />
+        </Subnets>
+      </InstanceAddress>
+      <InstanceAddress roleName="NotificationService">
+        <Subnets>
+          <Subnet name="WebTier" />
+        </Subnets>
+      </InstanceAddress>
+      <InstanceAddress roleName="HealthMonitoringService">
+        <Subnets>
+          <Subnet name="WebTier" />
+        </Subnets>
+      </InstanceAddress>
+      <InstanceAddress roleName="HealthStatusService">
+        <Subnets>
+          <Subnet name="WebTier" />
+        </Subnets>
+      </InstanceAddress>
+    </AddressAssignments>
+  </NetworkConfiguration>
+</ServiceConfiguration>

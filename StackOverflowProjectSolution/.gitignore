@@ -12,7 +12,6 @@ Desktop.ini
 *.sln.ide
 
 # Build outputs
-[Bb]in/
 [Oo]bj/
 [Dd]ebug*/
 [Rr]elease*/
@@ -54,9 +53,3 @@ csx/
 **/*.pubxml
 **/*.pubxml.user
 **/*.publishsettings
-
-# Konfiguracije sa tajnama:
-# Zadrži ServiceDefinition.csdef i Local .cscfg u repou,
-# a Cloud .cscfg (sa ključevima) ignoriši i koristi .example varijantu.
-**/ServiceConfiguration.Cloud.cscfg
-!**/ServiceConfiguration.Cloud.cscfg.example
