@@ -65,6 +65,11 @@ namespace StackOverflowService.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Models.User model)
         {
+            if (model.ProfileImage == null || model.ProfileImage.ContentLength == 0)
+            {
+                ModelState.AddModelError("ProfileImage", "Profile picture is required.");
+            }
+
             if (ModelState.IsValid)
             {
                 if (repo.UserExists(model.Email))

@@ -69,9 +69,10 @@
                     <div class="form-group">
                         @Html.LabelFor(m => m.ProfileImage)
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="profileImage" name="ProfileImage">
+                            <input type="file" class="custom-file-input" id="profileImage" name="ProfileImage" required>
                             <label class="custom-file-label" for="profileImage">Choose picture</label>
                         </div>
+                        @Html.ValidationMessage("ProfileImage", "", new { @class = "text-danger" })
                     </div>
 
                     <div class="form-group text-center mt-4">
@@ -91,10 +92,21 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>$(document).ready(function () {
+    <script>
+        $(document).ready(function () {
+            // prikaz imena fajla kad se izabere
             $('.custom-file-input').on('change', function () {
                 var fileName = $(this).val().split('\\').pop();
                 $(this).next('.custom-file-label').html(fileName);
             });
-        });</script>
+
+            // dodatna provjera da li je fajl izabran
+            $('form').on('submit', function (e) {
+                if (!$('#profileImage').val()) {
+                    e.preventDefault();
+                    alert("Please upload a profile picture before registering.");
+                }
+            });
+        });
+    </script>
 }
