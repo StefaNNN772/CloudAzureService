@@ -31,7 +31,7 @@ namespace AdminToolsConsoleApp.HelperMethods
         public void ListAllEmails(IAdminAlertEmails emailService)
         {
             List<string> emails = emailService.GetAllEmails();
-            Console.WriteLine("\n========================== ALL STUDENTS =========================== ");
+            Console.WriteLine("\n========================== ALL ADMINS =========================== ");
             foreach (var email in emails)
             {
                 Console.WriteLine($"Email: {email}");
