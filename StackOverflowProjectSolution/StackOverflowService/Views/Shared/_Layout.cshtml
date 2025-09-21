@@ -25,21 +25,7 @@
                     <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
                         <a class="nav-link" href="@Url.Action("Index", "Home")">Home</a>
                     </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Questions" ? "active" : "")">
-                        <a class="nav-link" href="@Url.Action("Index", "Questions")">Questions</a>
-                    </li>
                 </ul>
-
-                <form class="form-inline my-2 my-lg-0 mr-3" action="@Url.Action("Search", "Questions")" method="get">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="query" placeholder="Search...">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-light" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
 
                 @Html.Partial("_LoginPartial")
             </div>

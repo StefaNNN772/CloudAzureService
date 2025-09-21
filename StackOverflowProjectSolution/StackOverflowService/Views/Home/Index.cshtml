@@ -12,10 +12,12 @@
 
             @if (ViewBag.IsLoggedIn)
             {
+
+
                 <!-- Forma za postavljanje pitanja -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h4>Postavi novo pitanje</h4>
+                        <h4>Ask a new question</h4>
                     </div>
                     <div class="card-body">
                         <form id="questionForm" enctype="multipart/form-data">
@@ -42,7 +44,28 @@
                     <strong>Log in</strong> so you can ask and answer question.
                 </div>
             }
-
+            <h4>Filters</h4>
+            <!--pretraga i filtriranje-->
+            <div class="search-filter-controls mb-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="searchInput">Search questions:</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Type to search questions..." />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="sortFilter">Sort by date:</label>
+                            <select class="form-control" id="sortFilter">
+                                <option value="newest">Newest first</option>
+                                <option value="oldest">Oldest first</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4>All questions</h4>
             <!-- Lista pitanja -->
             <div class="questions-list">
                 @if (Model != null && Model.Any())
@@ -200,6 +223,35 @@
             .marked-best {
                 color: #28a745;
             }
+            .search-filter-controls {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #dee2e6;
+            }
+
+                .search-filter-controls label {
+                    font-weight: 600;
+                    color: #495057;
+                }
+
+            #searchInput:focus, #sortFilter:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            #clearSearch {
+                height: calc(1.5em + 0.75rem + 2px);
+            }
+
+            .questions-list {
+                transition: opacity 0.3s ease;
+            }
+
+            .search-highlight {
+                background-color: yellow;
+                font-weight: bold;
+            }
         </style>
 
         <script>
@@ -243,6 +295,74 @@ $(document).ready(function() {
             $(this).modal('hide');
         }
     });
+
+    var originalQuestions = [];
+    $('.question-box').each(function () {
+        var timestampText = $(this).find('.text-muted.small').text();
+
+        var dateParts = timestampText.split(' ');
+        var dateStr = dateParts[0]; 
+        var timeStr = dateParts[1]; 
+
+        var dateComponents = dateStr.split('.');
+        var timeComponents = timeStr.split(':');
+
+        var dateValue = new Date(
+            parseInt(dateComponents[2]), 
+            parseInt(dateComponents[1]) - 1,
+            parseInt(dateComponents[0]),
+            parseInt(timeComponents[0]),
+            parseInt(timeComponents[1])  
+        );
+
+        originalQuestions.push({
+            element: $(this).clone(true),
+            title: $(this).find('.card-title').text().toLowerCase(),
+            timestamp: timestampText,
+            dateValue: dateValue
+        });
+    });
+
+    // funkcionalnost za pretragu
+    $('#searchInput').on('input', function () {
+        var searchTerm = $(this).val().toLowerCase();
+        filterAndSortQuestions(searchTerm, $('#sortFilter').val());
+    });
+
+    // Sort functionality 
+    $('#sortFilter').on('change', function () {
+        var sortType = $(this).val();
+        var searchTerm = $('#searchInput').val().toLowerCase();
+        filterAndSortQuestions(searchTerm, sortType);
+    });
+
+    function filterAndSortQuestions(searchTerm, sortType) {
+        // filter po pretrazi
+        var filteredQuestions = originalQuestions.filter(function (question) {
+            return searchTerm === '' || question.title.includes(searchTerm);
+        });
+
+        // Sort po datumu
+        filteredQuestions.sort(function (a, b) {
+            if (sortType === 'newest') {
+                return b.dateValue - a.dateValue; // Najnoviji prvo
+            } else {
+                return a.dateValue - b.dateValue; // Najstariji prvo
+            }
+        });
+
+        // Ukloni postojeće pitanja
+        $('.questions-list').empty();
+
+        // Dodaj filtrirane i sortirane pitanja
+        if (filteredQuestions.length === 0) {
+            $('.questions-list').html('<p class="text-muted">No questions match your search criteria.</p>');
+        } else {
+            filteredQuestions.forEach(function (question) {
+                $('.questions-list').append(question.element);
+            });
+        }
+    }
 });
 
 function openQuestionModal(questionId) {
