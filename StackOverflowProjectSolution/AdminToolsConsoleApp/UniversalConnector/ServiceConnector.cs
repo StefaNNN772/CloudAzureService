@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 
 namespace AdminToolsConsoleApp.UniversalConnector
 {
@@ -17,6 +18,8 @@ namespace AdminToolsConsoleApp.UniversalConnector
         public void Connect(string serviceAddress)
         {
             var binding = new NetTcpBinding();
+            binding.ReceiveTimeout = TimeSpan.FromMinutes(5);
+            binding.SendTimeout = TimeSpan.FromMinutes(5);
             var endpointAddress = new EndpointAddress(serviceAddress);
             var factory = new ChannelFactory<TService>(binding, endpointAddress);
             proxy = factory.CreateChannel();
