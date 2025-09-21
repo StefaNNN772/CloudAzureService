@@ -252,6 +252,15 @@
                 background-color: yellow;
                 font-weight: bold;
             }
+            .answer-sort-controls {
+                display: flex;
+                align-items: center;
+            }
+
+                .answer-sort-controls label {
+                    font-weight: 500;
+                    color: #6c757d;
+                }
         </style>
 
         <script>
@@ -448,7 +457,22 @@ if (isLoggedIn && !isQuestionClosed) {
 
     // Prikaz odgovora
     content += '<div class="answers-section">';
-    content += '<h6>Answers (' + answers.length + '):</h6>';
+    content += '<div class="d-flex justify-content-between align-items-center mb-3">';
+    content += '<h6 class="mb-0">Answers (' + answers.length + '):</h6>';
+
+    if (answers.length > 1) {
+        content += '<div class="answer-sort-controls">';
+        content += '<label for="answerSort" class="mr-2 mb-0 small">Sort by:</label>';
+        content += '<select class="form-control form-control-sm" id="answerSort" style="width: auto; display: inline-block;">';
+        content += '<option value="best">Best score first</option>';
+        content += '<option value="worst">Worst score first</option>';
+        content += '</select>';
+        content += '</div>';
+    }
+
+    content += '</div>';
+
+    content += '<div id="answersContainer">';
 
     if (answers.length === 0) {
         content += '<p class="text-muted">There are no answers for this question yet.</p>';
@@ -498,7 +522,7 @@ if (isLoggedIn && !isQuestionClosed) {
 
             // Best answer button (samo za autora pitanja)
             if (canMarkBest && !isBestAnswer) {
-                content += '<button class="mark-best-btn ml-auto" onclick="markBestAnswer(\'' + question.RowKey + '\', \'' + answer.RowKey + '\')" title="Označi kao najbolji odgovor">★</button>';
+                content += '<button class="mark-best-btn ml-auto" onclick="markBestAnswer(\'' + question.RowKey + '\', \'' + answer.RowKey + '\')" title="Set as best answer">★</button>';
             } else if (isBestAnswer) {
                 content += '<span class="marked-best ml-auto" title="Najbolji odgovor">★</span>';
             }
@@ -513,13 +537,18 @@ if (isLoggedIn && !isQuestionClosed) {
     }
 
     content += '</div>';
-
+    content += '</div>';
     $('#modalContent').html(content);
 
     // Event handler za formu odgovora
     $('#answerForm').submit(function(e) {
         e.preventDefault();
         submitAnswer(question.RowKey);
+    });
+
+    $('#answerSort').on('change', function () {
+        var sortType = $(this).val();
+        sortAnswersInModal(answers, sortType, canMarkBest, question.RowKey, isLoggedIn);
     });
 }
 
@@ -537,6 +566,8 @@ function submitAnswer(questionId) {
             if (response.success) {
                 alert(response.message);
                 openQuestionModal(questionId); // Osvežiti modal
+                updateAnswerCountInMainList(questionId);
+
             } else {
                 alert(response.message);
             }
@@ -595,5 +626,104 @@ function markBestAnswer(questionId, answerId) {
             alert('Error while setting best answer.');
         }
     });
-}
-        </script>
+            }
+
+function sortAnswersInModal(answers, sortType, canMarkBest, questionRowKey, isLoggedIn) {
+                var bestAnswers = answers.filter(a => a.IsBestAnswer);
+                var regularAnswers = answers.filter(a => !a.IsBestAnswer);
+                regularAnswers.sort(function (a, b) {
+                    if (sortType === 'best') {
+                        return b.Score - a.Score; // Najviši score prvo
+                    } else {
+                        return a.Score - b.Score; // Najniži score prvo
+                    }
+                });
+
+                var sortedAnswers = bestAnswers.concat(regularAnswers);
+                var answersHtml = '';
+
+                sortedAnswers.forEach(function (answerData) {
+                    var answer = answerData.Answer;
+                    var user = answerData.User;
+                    var score = answerData.Score;
+                    var userVote = answerData.UserVote;
+                    var isBestAnswer = answerData.IsBestAnswer;
+
+                    var answerClass = isBestAnswer ? 'answer-item best-answer' : 'answer-item';
+                    answersHtml += '<div class="' + answerClass + '">';
+
+                    if (isBestAnswer) {
+                        answersHtml += '<div class="text-success mb-2"><strong>✓ Best answer</strong></div>';
+                    }
+
+                    answersHtml += '<div class="d-flex">';
+
+                    if (isLoggedIn) {
+                        answersHtml += '<div class="vote-buttons">';
+                        answersHtml += '<button class="vote-btn ' + (userVote === 1 ? 'active' : '') + '" onclick="voteAnswer(\'' + answer.RowKey + '\', 1)" ' + (userVote !== 0 ? 'disabled' : '') + '>▲</button>';
+                        answersHtml += '<span class="vote-score">' + score + '</span>';
+                        answersHtml += '<button class="vote-btn ' + (userVote === -1 ? 'active' : '') + '" onclick="voteAnswer(\'' + answer.RowKey + '\', -1)" ' + (userVote !== 0 ? 'disabled' : '') + '>▼</button>';
+                        answersHtml += '</div>';
+                    }
+
+                    answersHtml += '<div class="flex-grow-1">';
+                    answersHtml += '<div class="user-info d-flex align-items-center mb-2">';
+
+                    if (user.PictureUrl) {
+                        answersHtml += '<img src="' + user.PictureUrl + '" alt="Profile Picture" class="profile-picture rounded-circle mr-2" style="width: 40px; height: 40px; object-fit: cover;">';
+                    } else {
+                        answersHtml += '<div class="profile-picture rounded-circle mr-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #007bff; color: white; font-weight: bold;">';
+                        answersHtml += user.Name.charAt(0).toUpperCase();
+                        answersHtml += '</div>';
+                    }
+
+                    answersHtml += '<div>';
+                    answersHtml += '<strong>' + user.Name + ' ' + user.LastName + '</strong>';
+                    answersHtml += '<div class="text-muted small">' + answer.FormattedTimestamp + '</div>';
+                    answersHtml += '</div>';
+
+                    if (canMarkBest && !isBestAnswer) {
+                        answersHtml += '<button class="mark-best-btn ml-auto" onclick="markBestAnswer(\'' + questionRowKey + '\', \'' + answer.RowKey + '\')" title="Mark as best answer">★</button>';
+                    } else if (isBestAnswer) {
+                        answersHtml += '<span class="marked-best ml-auto" title="Best answer">★</span>';
+                    }
+
+                    answersHtml += '</div>';
+                    answersHtml += '<div>' + answer.Body + '</div>';
+                    answersHtml += '</div>';
+                    answersHtml += '</div>';
+                    answersHtml += '</div>';
+                });
+
+                $('#answersContainer').html(answersHtml);
+            }
+
+
+//Dodatna metoda koja dinamicki azurira broj odgovora za pitanje
+function updateAnswerCountInMainList(questionId) {
+                var questionBox = $('.question-box[data-question-id="' + questionId + '"]');
+                var answersCountElement = questionBox.find('.answers-count');
+
+                var currentText = answersCountElement.text();
+                var currentCount = 0;
+
+                if (currentText.includes('Answer this question first!')) {
+                    currentCount = 0;
+                } else {
+                    var match = currentText.match(/(\d+)/);
+                    if (match) {
+                        currentCount = parseInt(match[1]);
+                    }
+                }
+                var newCount = currentCount + 1;
+                var newText = newCount + ' Answer' + (newCount === 1 ? '' : 's');
+
+                answersCountElement.text(newText);
+                for (var i = 0; i < originalQuestions.length; i++) {
+                    if (originalQuestions[i].element.attr('data-question-id') === questionId) {
+                        originalQuestions[i].element.find('.answers-count').text(newText);
+                        break;
+                    }
+                }
+            }
+</script>

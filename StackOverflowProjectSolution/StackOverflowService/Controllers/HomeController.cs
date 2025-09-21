@@ -320,11 +320,11 @@ namespace StackOverflowService.Controllers
                 question.BestAnswerId = answerId;
                 questionRepo.UpdateQuestion(question);
 
-                return Json(new { success = true, message = "Najbolji odgovor je označen!" });
+                return Json(new { success = true, message = "Best answer is noted!" });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Greška pri označavanju najboljeg odgovora: " + ex.Message });
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 
@@ -353,7 +353,7 @@ namespace StackOverflowService.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("Greška pri uploadu slike: " + ex.Message);
+                throw new Exception("Error: " + ex.Message);
             }
         }
 
