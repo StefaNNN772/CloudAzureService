@@ -1,26 +1,31 @@
 ﻿using DatabaseRepository.Models;
 using DatabaseRepository;
 using DatabaseRepository.Repositories;
-using Microsoft.Azure;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage;
+using StackOverflowService.Helpers;
+using StackOverflowService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using StackOverflowService.Helpers;
-using StackOverflowService.Models;
+using Microsoft.Azure;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage;
 
 namespace StackOverflowService.Controllers
 {
-    public class HomeController : Controller
+    
+
+    public class QuestionsController : Controller
     {
         private UserRepository userRepo = new UserRepository();
         private QuestionRepository questionRepo = new QuestionRepository();
         private AnswerRepository answerRepo = new AnswerRepository();
         private VoteRepository voteRepo = new VoteRepository();
-        public ActionResult Index()
+        // GET: Question
+
+        QuestionRepository repo = new QuestionRepository();
+        public ActionResult MyQuestions()
         {
             // Dobijanje korisnika iz sesije
             var currentUser = SessionHelper.GetObjectFromJson<UserSession>(Session, "CurrentUser");
@@ -45,63 +50,21 @@ namespace StackOverflowService.Controllers
                 var user = userRepo.GetUserByRowKey(question.UserId);
                 var answersCount = answerRepo.RetrieveAllAnswers()
                     .Where(a => a.QuestionId == question.RowKey).ToList().Count();
-
-                questionsWithDetails.Add(new QuestionModel
+                if (question.UserId == currentUserId)
                 {
-                    Question = question,
-                    User = user,
-                    AnswersCount = answersCount
-                });
+                    questionsWithDetails.Add(new QuestionModel
+                    {
+                        Question = question,
+                        User = user,
+                        AnswersCount = answersCount
+                    });
+                }
             }
 
             ViewBag.CurrentUserId = currentUserId;
             ViewBag.IsLoggedIn = !string.IsNullOrEmpty(currentUserId);
 
             return View(questionsWithDetails);
-        }
-
-        //Post metoda za postavljanje pitanja
-        [HttpPost]
-        public ActionResult CreateQuestion(string title, string description, HttpPostedFileBase problemImage)
-        {
-            var currentUser = SessionHelper.GetObjectFromJson<UserSession>(Session, "CurrentUser");
-            string currentUserId = null;
-            if (currentUser != null)
-            {
-                var user = userRepo.GetUser(currentUser.Email);
-                currentUserId = user?.RowKey;
-            }
-            if (string.IsNullOrEmpty(currentUserId))
-            {
-                return Json(new { success = false, message = "You need to be logged in to ask a question" });
-            }
-
-            try
-            {
-                var questionId = Guid.NewGuid().ToString();
-                var question = new Question(questionId)
-                {
-                    Title = title,
-                    Description = description,
-                    UserId = currentUserId,
-                    BestAnswerId = ""
-                };
-
-                // Upload slike ako postoji
-                if (problemImage != null && problemImage.ContentLength > 0)
-                {
-                    string imageUrl = UploadImage(problemImage, "question-" + questionId);
-                    question.ProblemPictureUrl = imageUrl;
-                }
-
-                questionRepo.AddQuestion(question);
-
-                return Json(new { success = true, message = "Question asked successfuly!" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Error when asking a question: " + ex.Message });
-            }
         }
 
         //Get metoda za pribavljanje detalje o pitanju
@@ -328,6 +291,65 @@ namespace StackOverflowService.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult DeleteQuestion(string rowKey)
+        {
+            
+            try
+            {
+                QuestionRepository repo = new QuestionRepository();
+                
+                repo.DeleteQuestion(rowKey);
+
+                return Json(new { success = true, message = "Question deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult UpdateQuestion(string rowKey, string title, string description, HttpPostedFileBase problemImage, bool? removeImage)
+        {
+            try
+            {
+                // 1. Nađi postojeće pitanje
+                var question = questionRepo.GetQuestionByRowKey(rowKey);
+                if (question == null)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                // 2. Izmeni polja
+                question.Title = title;
+                question.Description = description;
+
+                // 3. Obradi sliku
+                if (problemImage != null && problemImage.ContentLength > 0)
+                {
+                    // Upload nove slike → pregazi staru
+                    string imageUrl = UploadImage(problemImage, "question-" + rowKey);
+                    question.ProblemPictureUrl = imageUrl;
+                }
+                else if (removeImage == true)
+                {
+                    // Ako je označeno uklanjanje slike
+                    question.ProblemPictureUrl = null;
+                }
+                // ako nije poslata nova slika niti remove → ostaje stara
+
+                // 4. Snimi izmenu
+                questionRepo.UpdateQuestion(question);
+
+                return Json(new { success = true, message = "Question updated successfully!", data = question });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error updating question: " + ex.Message });
+            }
+        }
+
         //Postavljanje slika za pitanje
         private string UploadImage(HttpPostedFileBase file, string fileName)
         {
@@ -357,20 +379,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
-       
     }
+    
 }

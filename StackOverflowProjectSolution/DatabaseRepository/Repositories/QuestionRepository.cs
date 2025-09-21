@@ -60,5 +60,19 @@ namespace DatabaseRepository.Repositories
                           select g).FirstOrDefault();
             return result;
         }
+
+        public void DeleteQuestion(string rowKey)
+        {
+            try
+            {
+                var question = GetQuestionByRowKey(rowKey);
+                TableOperation deleteOperation = TableOperation.Delete(question);
+                _table.Execute(deleteOperation);
+            }
+            catch (StorageException ex)
+            {
+                throw new Exception("Error deleting question: " + ex.Message, ex);
+            }
+        }
     }
 }
