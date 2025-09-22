@@ -10,14 +10,14 @@ namespace NotificationContracts
     public class AzureQueueService
     {
         private CloudQueue _notificationQueue;
-        private const string QueueName = "notifications";
+        private const string DefaultQueueName = "notifications";
 
-        public AzureQueueService()
+        public AzureQueueService(string queueName = DefaultQueueName)
         {
-            InitializeQueue();
+            InitializeQueue(queueName);
         }
 
-        private void InitializeQueue()
+        private void InitializeQueue(string queueName)
         {
             try
             {
@@ -25,11 +25,14 @@ namespace NotificationContracts
                     CloudConfigurationManager.GetSetting("DataConnectionString"));
                 
                 var queueClient = storageAccount.CreateCloudQueueClient();
-                _notificationQueue = queueClient.GetQueueReference(QueueName);
+                _notificationQueue = queueClient.GetQueueReference(queueName);
                 _notificationQueue.CreateIfNotExists();
+                
+                System.Diagnostics.Trace.TraceInformation($"Azure Queue '{queueName}' initialized successfully");
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceError($"Failed to initialize Azure Queue '{queueName}': {ex.Message}");
                 throw new Exception($"Failed to initialize Azure Queue: {ex.Message}", ex);
             }
         }
@@ -42,9 +45,12 @@ namespace NotificationContracts
                 var queueMessage = new CloudQueueMessage(messageJson);
                 
                 await _notificationQueue.AddMessageAsync(queueMessage);
+                
+                System.Diagnostics.Trace.TraceInformation($"Message sent to queue: Type={message.MessageType}, Recipients={message.EmailAddresses?.Count ?? 0}");
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceError($"Failed to send message to queue: {ex.Message}");
                 throw new Exception($"Failed to send message to queue: {ex.Message}", ex);
             }
         }

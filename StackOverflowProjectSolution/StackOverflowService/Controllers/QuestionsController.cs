@@ -285,22 +285,34 @@ namespace StackOverflowService.Controllers
                     return Json(new { success = false, message = "Answer author not found." });
                 }
 
+                // Get question author details (they may want to know when their question gets a best answer)
+                var questionAuthor = userRepo.GetUserByRowKey(question.UserId);
+
                 question.BestAnswerId = answerId;
                 questionRepo.UpdateQuestion(question);
 
                 // Send notification via queue
                 try
                 {
+                    var emailList = new List<string> { answerAuthor.Email };
+                    
+                    // Add question author email if different from answer author
+                    if (questionAuthor != null && questionAuthor.Email != answerAuthor.Email)
+                    {
+                        emailList.Add(questionAuthor.Email);
+                    }
+
                     var notificationMessage = new NotificationMessage
                     {
                         MessageType = MessageTypes.BestAnswerSelected,
-                        EmailAddresses = new List<string> { answerAuthor.Email },
+                        EmailAddresses = emailList,
                         Data = new Dictionary<string, object>
                         {
                             { "QuestionTitle", question.Title },
                             { "QuestionId", questionId },
                             { "AnswerId", answerId },
-                            { "AuthorName", answerAuthor.FirstName + " " + answerAuthor.LastName }
+                            { "AnswerAuthorName", answerAuthor.FirstName + " " + answerAuthor.LastName },
+                            { "QuestionAuthorName", questionAuthor?.FirstName + " " + questionAuthor?.LastName ?? "Unknown" }
                         }
                     };
 

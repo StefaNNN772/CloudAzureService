@@ -132,13 +132,16 @@ namespace NotificationService
         private string CreateBestAnswerEmailBody(NotificationMessage message)
         {
             var questionTitle = message.Data.ContainsKey("QuestionTitle") ? message.Data["QuestionTitle"].ToString() : "Unknown Question";
-            var authorName = message.Data.ContainsKey("AuthorName") ? message.Data["AuthorName"].ToString() : "Unknown Author";
+            var answerAuthorName = message.Data.ContainsKey("AnswerAuthorName") ? message.Data["AnswerAuthorName"].ToString() : "Unknown Author";
+            var questionAuthorName = message.Data.ContainsKey("QuestionAuthorName") ? message.Data["QuestionAuthorName"].ToString() : "Unknown Author";
             
+            // Generic notification that works for both question author and answer author
             return $@"
-                <h2>Congratulations!</h2>
-                <p>Dear {authorName},</p>
-                <p>Your answer to the question '<strong>{questionTitle}</strong>' has been selected as the best answer!</p>
-                <p>Thank you for your valuable contribution to our community.</p>
+                <h2>Great News!</h2>
+                <p>A best answer has been selected for the question '<strong>{questionTitle}</strong>'!</p>
+                <p><strong>Answer provided by:</strong> {answerAuthorName}</p>
+                <p><strong>Question asked by:</strong> {questionAuthorName}</p>
+                <p>Thank you for your participation in our community.</p>
                 <p>Best regards,<br/>StackOverflow Service Team</p>
             ";
         }
