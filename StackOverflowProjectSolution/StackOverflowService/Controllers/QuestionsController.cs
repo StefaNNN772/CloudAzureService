@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
+using System.Threading.Tasks;
 
 namespace StackOverflowService.Controllers
 {
@@ -234,7 +235,7 @@ namespace StackOverflowService.Controllers
         }
 
         [HttpPost]
-        public ActionResult MarkBestAnswer(string questionId, string answerId)
+        public async Task<ActionResult> MarkBestAnswer(string questionId, string answerId)
         {
             var currentUser = SessionHelper.GetObjectFromJson<UserSession>(Session, "CurrentUser");
             string currentUserId = null;
@@ -270,6 +271,11 @@ namespace StackOverflowService.Controllers
 
                 question.BestAnswerId = answerId;
                 questionRepo.UpdateQuestion(question);
+
+                // Send notification message to queue
+                var queueHelper = new QueueHelper();
+                var notificationMessage = new NotificationMessage(answerId, "BestAnswerSelected");
+                await queueHelper.SendNotificationMessageAsync("notifications", notificationMessage);
 
                 return Json(new { success = true, message = "Najbolji odgovor je označen!" });
             }

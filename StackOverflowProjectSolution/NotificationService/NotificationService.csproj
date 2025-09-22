@@ -140,6 +140,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseRepository\DatabaseRepository.csproj">
+      <Project>{EC61E51C-1186-46D4-80AD-9B603258B251}</Project>
+      <Name>DatabaseRepository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HealthMonitoringContracts\HealthMonitoringContracts.csproj">
       <Project>{9EAD6090-3A8F-4B30-AF2D-F19EF41D07E2}</Project>
       <Name>HealthMonitoringContracts</Name>
