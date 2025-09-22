@@ -320,6 +320,10 @@
       <Project>{9ead6090-3a8f-4b30-af2d-f19ef41d07e2}</Project>
       <Name>HealthMonitoringContracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NotificationContracts\NotificationContracts.csproj">
+      <Project>{96575019-3164-4843-a070-da9f9597c09e}</Project>
+      <Name>NotificationContracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

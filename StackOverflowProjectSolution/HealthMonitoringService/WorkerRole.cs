@@ -23,6 +23,7 @@ namespace HealthMonitoringService
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
         private readonly HealthCheckRepository _healthCheckRepository = new HealthCheckRepository();
         private readonly AlertEmailsRepository _alertEmailsRepository = new AlertEmailsRepository();
+        private readonly AzureQueueService _queueService = new AzureQueueService();
 
         private NotifyAlertEmailsPartialServer notifyAlertEmails = new NotifyAlertEmailsPartialServer();
         //private JobServer jobServer = new JobServer();
@@ -180,30 +181,59 @@ namespace HealthMonitoringService
                         DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(utcNow, tz);
 
 
+                        string serviceName;
                         if (!isAliveSO)
                         {
                             Trace.TraceInformation("StackOverflowService not_ok");
-
-
+                            serviceName = "StackOverflowService";
                             healthCheck.Date = DateTime.Now;
-                            healthCheck.ServiceName = "StackOverflowService";
+                            healthCheck.ServiceName = serviceName;
                             healthCheck.Status = "not_ok";
-
                         }
                         else
                         {
-                            Trace.TraceInformation( "NotificationService not_ok");
-
+                            Trace.TraceInformation("NotificationService not_ok");
+                            serviceName = "NotificationService";
                             healthCheck.Date = DateTime.Now;
-                            healthCheck.ServiceName = "NotificationService";
-                            healthCheck.Status =  "not_ok";
+                            healthCheck.ServiceName = serviceName;
+                            healthCheck.Status = "not_ok";
                         }
-                         _healthCheckRepository.AddHealthCheck(healthCheck);
+                        _healthCheckRepository.AddHealthCheck(healthCheck);
 
-                        string message = $"not_ok - {ex.Message}";
+                        string message = $"Service {serviceName} is not available - {ex.Message}";
                         Trace.TraceError(message);
 
-                        await sendEmailsProxy.SendEmailsAsync(emailsString, message);
+                        // Send notification via queue instead of direct email
+                        try
+                        {
+                            var notificationMessage = new NotificationMessage
+                            {
+                                MessageType = MessageTypes.ServiceHealthAlert,
+                                EmailAddresses = emailsString,
+                                Data = new Dictionary<string, object>
+                                {
+                                    { "ServiceName", serviceName },
+                                    { "Status", "not_ok" },
+                                    { "ErrorMessage", ex.Message },
+                                    { "Timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") }
+                                }
+                            };
+
+                            await _queueService.SendMessageAsync(notificationMessage);
+                        }
+                        catch (Exception queueEx)
+                        {
+                            Trace.TraceError($"Failed to queue health alert notification: {queueEx.Message}");
+                            // Fall back to direct email sending if queue fails
+                            try
+                            {
+                                await sendEmailsProxy.SendEmailsAsync(emailsString, message);
+                            }
+                            catch (Exception emailEx)
+                            {
+                                Trace.TraceError($"Failed to send direct email notification: {emailEx.Message}");
+                            }
+                        }
                         
                     }
 

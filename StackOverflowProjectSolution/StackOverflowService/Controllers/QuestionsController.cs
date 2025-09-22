@@ -11,6 +11,8 @@ using System.Web.Mvc;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
+using NotificationContracts;
+using System.Threading.Tasks;
 
 namespace StackOverflowService.Controllers
 {
@@ -21,6 +23,7 @@ namespace StackOverflowService.Controllers
         private AnswerRepository answerRepo = new AnswerRepository();
         private VoteRepository voteRepo = new VoteRepository();
         private NotificationsLogRepository notificationsLogRepository = new NotificationsLogRepository();
+        private AzureQueueService queueService = new AzureQueueService();
 
         QuestionRepository repo = new QuestionRepository();
         public ActionResult MyQuestions()
@@ -234,7 +237,7 @@ namespace StackOverflowService.Controllers
         }
 
         [HttpPost]
-        public ActionResult MarkBestAnswer(string questionId, string answerId)
+        public async Task<ActionResult> MarkBestAnswer(string questionId, string answerId)
         {
             var currentUser = SessionHelper.GetObjectFromJson<UserSession>(Session, "CurrentUser");
             string currentUserId = null;
@@ -268,8 +271,46 @@ namespace StackOverflowService.Controllers
                     return Json(new { success = false, message = "Best answer already decided." });
                 }
 
+                // Get answer details
+                var answer = answerRepo.GetAnswerById(answerId);
+                if (answer == null)
+                {
+                    return Json(new { success = false, message = "Answer not found." });
+                }
+
+                // Get answer author details
+                var answerAuthor = userRepo.GetUserByRowKey(answer.UserId);
+                if (answerAuthor == null)
+                {
+                    return Json(new { success = false, message = "Answer author not found." });
+                }
+
                 question.BestAnswerId = answerId;
                 questionRepo.UpdateQuestion(question);
+
+                // Send notification via queue
+                try
+                {
+                    var notificationMessage = new NotificationMessage
+                    {
+                        MessageType = MessageTypes.BestAnswerSelected,
+                        EmailAddresses = new List<string> { answerAuthor.Email },
+                        Data = new Dictionary<string, object>
+                        {
+                            { "QuestionTitle", question.Title },
+                            { "QuestionId", questionId },
+                            { "AnswerId", answerId },
+                            { "AuthorName", answerAuthor.FirstName + " " + answerAuthor.LastName }
+                        }
+                    };
+
+                    await queueService.SendMessageAsync(notificationMessage);
+                }
+                catch (Exception queueEx)
+                {
+                    // Log the queue error but don't fail the best answer marking
+                    System.Diagnostics.Trace.TraceError($"Failed to queue best answer notification: {queueEx.Message}");
+                }
 
                 return Json(new { success = true, message = "Najbolji odgovor je označen!" });
             }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using NotificationContracts;
 
 namespace NotificationService
 {
@@ -15,6 +16,7 @@ namespace NotificationService
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
+        private readonly AzureQueueService queueService = new AzureQueueService();
 
         private JobServer jobServer = new JobServer();
         private HealthMonitoring hmServer = new HealthMonitoring();
@@ -71,12 +73,92 @@ namespace NotificationService
 
         private async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO: Replace the following with your own logic.
+            var emailService = new JobServerProvider();
+            
             while (!cancellationToken.IsCancellationRequested)
             {
-                Trace.TraceInformation("Working");
-                await Task.Delay(1000);
+                try
+                {
+                    // Check for messages in the queue
+                    var message = await queueService.ReceiveMessageAsync();
+                    
+                    if (message != null)
+                    {
+                        Trace.TraceInformation($"Processing notification message: {message.MessageType}");
+                        
+                        // Build email content based on message type
+                        string emailBody = "";
+                        string subject = "Notification";
+                        
+                        switch (message.MessageType)
+                        {
+                            case MessageTypes.BestAnswerSelected:
+                                emailBody = CreateBestAnswerEmailBody(message);
+                                subject = "Your answer was selected as the best answer!";
+                                break;
+                                
+                            case MessageTypes.ServiceHealthAlert:
+                                emailBody = CreateServiceAlertEmailBody(message);
+                                subject = "Service Health Alert";
+                                break;
+                                
+                            default:
+                                emailBody = "You have a new notification.";
+                                break;
+                        }
+                        
+                        // Send emails to all recipients
+                        if (message.EmailAddresses != null && message.EmailAddresses.Count > 0)
+                        {
+                            await emailService.SendEmailsAsync(message.EmailAddresses, emailBody);
+                            Trace.TraceInformation($"Sent {message.MessageType} notification to {message.EmailAddresses.Count} recipients");
+                        }
+                    }
+                    else
+                    {
+                        // No messages in queue, wait a bit before checking again
+                        Trace.TraceInformation("No messages in queue, waiting...");
+                        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError($"Error processing queue message: {ex.Message}");
+                    await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                }
             }
+        }
+        
+        private string CreateBestAnswerEmailBody(NotificationMessage message)
+        {
+            var questionTitle = message.Data.ContainsKey("QuestionTitle") ? message.Data["QuestionTitle"].ToString() : "Unknown Question";
+            var authorName = message.Data.ContainsKey("AuthorName") ? message.Data["AuthorName"].ToString() : "Unknown Author";
+            
+            return $@"
+                <h2>Congratulations!</h2>
+                <p>Dear {authorName},</p>
+                <p>Your answer to the question '<strong>{questionTitle}</strong>' has been selected as the best answer!</p>
+                <p>Thank you for your valuable contribution to our community.</p>
+                <p>Best regards,<br/>StackOverflow Service Team</p>
+            ";
+        }
+        
+        private string CreateServiceAlertEmailBody(NotificationMessage message)
+        {
+            var serviceName = message.Data.ContainsKey("ServiceName") ? message.Data["ServiceName"].ToString() : "Unknown Service";
+            var status = message.Data.ContainsKey("Status") ? message.Data["Status"].ToString() : "Unknown Status";
+            var errorMessage = message.Data.ContainsKey("ErrorMessage") ? message.Data["ErrorMessage"].ToString() : "No details available";
+            var timestamp = message.Data.ContainsKey("Timestamp") ? message.Data["Timestamp"].ToString() : DateTime.Now.ToString();
+            
+            return $@"
+                <h2>Service Health Alert</h2>
+                <p><strong>Service:</strong> {serviceName}</p>
+                <p><strong>Status:</strong> {status}</p>
+                <p><strong>Time:</strong> {timestamp}</p>
+                <p><strong>Details:</strong> {errorMessage}</p>
+                <p>Please investigate this issue immediately.</p>
+                <p>Monitoring Team</p>
+            ";
         }
     }
 }
