@@ -22,13 +22,11 @@ namespace StackOverflowService.Controllers
         private VoteRepository voteRepo = new VoteRepository();
         public ActionResult Index()
         {
-            // Dobijanje korisnika iz sesije
             var currentUser = SessionHelper.GetObjectFromJson<UserSession>(Session, "CurrentUser");
             string currentUserId = null;
 
             if (currentUser != null)
             {
-                // Pronađi user ID na osnovu email-a
                 var user = userRepo.GetUser(currentUser.Email);
                 currentUserId = user?.RowKey;
             }
@@ -36,7 +34,6 @@ namespace StackOverflowService.Controllers
             ViewBag.CurrentUserId = currentUserId;
             ViewBag.IsLoggedIn = !string.IsNullOrEmpty(currentUserId);
 
-            // Dobijanje svih pitanja sa dodatnim informacijama
             var questions = questionRepo.RetrieveAllQuestions().ToList();
             var questionsWithDetails = new List<QuestionModel>();
 
@@ -60,7 +57,6 @@ namespace StackOverflowService.Controllers
             return View(questionsWithDetails);
         }
 
-        //Post metoda za postavljanje pitanja
         [HttpPost]
         public ActionResult CreateQuestion(string title, string description, HttpPostedFileBase problemImage)
         {
@@ -87,7 +83,6 @@ namespace StackOverflowService.Controllers
                     BestAnswerId = ""
                 };
 
-                // Upload slike ako postoji
                 if (problemImage != null && problemImage.ContentLength > 0)
                 {
                     string imageUrl = UploadImage(problemImage, "question-" + questionId);
@@ -104,7 +99,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Get metoda za pribavljanje detalje o pitanju
         [HttpGet]
         public ActionResult GetQuestionDetails(string questionId)
         {
@@ -184,7 +178,6 @@ namespace StackOverflowService.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        //Postavljanje odgovora
         [HttpPost]
         public ActionResult SubmitAnswer(string questionId, string answerBody)
         {
@@ -200,7 +193,6 @@ namespace StackOverflowService.Controllers
                 return Json(new { success = false, message = "You need to be logged in to answer." });
             }
 
-            // Proveriti da li je pitanje zatvoreno
             var question = questionRepo.RetrieveAllQuestions()
                 .Where(q => q.RowKey == questionId).FirstOrDefault();
 
@@ -229,7 +221,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Metoda za glasanje (downvote/upvote)
         [HttpPost]
         public ActionResult VoteAnswer(string answerId, int voteValue)
         {
@@ -247,8 +238,7 @@ namespace StackOverflowService.Controllers
 
             try
             {
-                // Proveriti da li je korisnik već glasao
-                //Moze se kasnije promijeniti metoda da korisnik moze da mijenja glasove
+                // Proveriti da li je korisnik vec glasao
                 var existingVote = voteRepo.RetrieveAllVotes()
                     .Where(v => v.UserId == currentUserId && v.AnswerId == answerId)
                     .FirstOrDefault();
@@ -263,12 +253,11 @@ namespace StackOverflowService.Controllers
                 {
                     UserId = currentUserId,
                     AnswerId = answerId,
-                    Value = voteValue // 1 za upvote, -1 za downvote
+                    Value = voteValue
                 };
 
                 voteRepo.AddVote(vote);
 
-                // Vratiti novi score
                 var allVotes = voteRepo.RetrieveAllVotes()
                     .Where(v => v.AnswerId == answerId).ToList();
                 var newScore = allVotes.Sum(v => v.Value);
@@ -281,7 +270,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Postavljanje najboljeg odgovora
         [HttpPost]
         public ActionResult MarkBestAnswer(string questionId, string answerId)
         {
@@ -328,7 +316,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Postavljanje slika za pitanje
         private string UploadImage(HttpPostedFileBase file, string fileName)
         {
             try

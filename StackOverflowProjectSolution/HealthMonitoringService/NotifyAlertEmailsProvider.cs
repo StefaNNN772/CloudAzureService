@@ -3,6 +3,8 @@ using PostmarkDotNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,30 +12,65 @@ namespace HealthMonitoringService
 {
     public class NotifyAlertEmailsProvider:INotifyAlertEmails
     {
-        private readonly string _postmarkApiKey = "caf0a99b-5fe6-49ef-a871-08f9a9d122ba";
-        private readonly string _fromEmail = "grahovac.pr100.2021@uns.ac.rs";
+        //private readonly string _postmarkApiKey = "caf0a99b-5fe6-49ef-a871-08f9a9d122ba";
+        //private readonly string _fromEmail = "grahovac.pr100.2021@uns.ac.rs";
+
+        //public async Task SendEmailsAsync(List<string> emails, string emailBody)
+        //{
+        //    var client = new PostmarkClient(_postmarkApiKey);
+
+        //    foreach (var toEmail in emails)
+        //    {
+        //        var message = new PostmarkMessage
+        //        {
+        //            From = _fromEmail,
+        //            To = toEmail,
+        //            Subject = "Notification",
+        //            TextBody = emailBody,
+        //            HtmlBody = $"<p>{emailBody}</p>"
+        //        };
+
+        //        var result = await client.SendMessageAsync(message);
+
+        //        if (result.Status != PostmarkStatus.Success)
+        //        {
+        //            // Ako hoćeš možeš logovati ili baciti exception
+        //            System.Diagnostics.Debug.WriteLine($"Failed to send email to {toEmail}: {result.Message}");
+        //        }
+        //    }
+        //}
+
+        private string smtpServer = "smtp.gmail.com";
+        private int port = 587;
+        private string senderEmail = "schneiderelectricinternship@gmail.com";
+        private string senderPassword = "aeoo vuqm gifg pnsw";
 
         public async Task SendEmailsAsync(List<string> emails, string emailBody)
         {
-            var client = new PostmarkClient(_postmarkApiKey);
-
-            foreach (var toEmail in emails)
+            using (var smtp = new SmtpClient(smtpServer, port))
             {
-                var message = new PostmarkMessage
-                {
-                    From = _fromEmail,
-                    To = toEmail,
-                    Subject = "Notification",
-                    TextBody = emailBody,
-                    HtmlBody = $"<p>{emailBody}</p>"
-                };
+                smtp.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                smtp.EnableSsl = true;
 
-                var result = await client.SendMessageAsync(message);
-
-                if (result.Status != PostmarkStatus.Success)
+                foreach (var toEmail in emails)
                 {
-                    // Ako hoćeš možeš logovati ili baciti exception
-                    System.Diagnostics.Debug.WriteLine($"Failed to send email to {toEmail}: {result.Message}");
+                    using (var mail = new MailMessage())
+                    {
+                        mail.From = new MailAddress(senderEmail);
+                        mail.To.Add(toEmail);
+                        mail.Subject = "Notification";
+                        mail.Body = emailBody;
+                        mail.IsBodyHtml = true;
+
+                        try
+                        {
+                            await smtp.SendMailAsync(mail);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Failed to send email to {toEmail}: {ex.Message}");
+                        }
+                    }
                 }
             }
         }

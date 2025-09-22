@@ -14,26 +14,21 @@ using Microsoft.WindowsAzure.Storage;
 
 namespace StackOverflowService.Controllers
 {
-    
-
     public class QuestionsController : Controller
     {
         private UserRepository userRepo = new UserRepository();
         private QuestionRepository questionRepo = new QuestionRepository();
         private AnswerRepository answerRepo = new AnswerRepository();
         private VoteRepository voteRepo = new VoteRepository();
-        // GET: Question
 
         QuestionRepository repo = new QuestionRepository();
         public ActionResult MyQuestions()
         {
-            // Dobijanje korisnika iz sesije
             var currentUser = SessionHelper.GetObjectFromJson<UserSession>(Session, "CurrentUser");
             string currentUserId = null;
 
             if (currentUser != null)
             {
-                // Pronađi user ID na osnovu email-a
                 var user = userRepo.GetUser(currentUser.Email);
                 currentUserId = user?.RowKey;
             }
@@ -41,7 +36,6 @@ namespace StackOverflowService.Controllers
             ViewBag.CurrentUserId = currentUserId;
             ViewBag.IsLoggedIn = !string.IsNullOrEmpty(currentUserId);
 
-            // Dobijanje svih pitanja sa dodatnim informacijama
             var questions = questionRepo.RetrieveAllQuestions().ToList();
             var questionsWithDetails = new List<QuestionModel>();
 
@@ -67,7 +61,6 @@ namespace StackOverflowService.Controllers
             return View(questionsWithDetails);
         }
 
-        //Get metoda za pribavljanje detalje o pitanju
         [HttpGet]
         public ActionResult GetQuestionDetails(string questionId)
         {
@@ -147,7 +140,6 @@ namespace StackOverflowService.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        //Postavljanje odgovora
         [HttpPost]
         public ActionResult SubmitAnswer(string questionId, string answerBody)
         {
@@ -163,7 +155,6 @@ namespace StackOverflowService.Controllers
                 return Json(new { success = false, message = "You need to be logged in to answer." });
             }
 
-            // Proveriti da li je pitanje zatvoreno
             var question = questionRepo.RetrieveAllQuestions()
                 .Where(q => q.RowKey == questionId).FirstOrDefault();
 
@@ -192,7 +183,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Metoda za glasanje (downvote/upvote)
         [HttpPost]
         public ActionResult VoteAnswer(string answerId, int voteValue)
         {
@@ -210,8 +200,7 @@ namespace StackOverflowService.Controllers
 
             try
             {
-                // Proveriti da li je korisnik već glasao
-                //Moze se kasnije promijeniti metoda da korisnik moze da mijenja glasove
+                // Proveriti da li je korisnik vec glasao
                 var existingVote = voteRepo.RetrieveAllVotes()
                     .Where(v => v.UserId == currentUserId && v.AnswerId == answerId)
                     .FirstOrDefault();
@@ -226,12 +215,11 @@ namespace StackOverflowService.Controllers
                 {
                     UserId = currentUserId,
                     AnswerId = answerId,
-                    Value = voteValue // 1 za upvote, -1 za downvote
+                    Value = voteValue
                 };
 
                 voteRepo.AddVote(vote);
 
-                // Vratiti novi score
                 var allVotes = voteRepo.RetrieveAllVotes()
                     .Where(v => v.AnswerId == answerId).ToList();
                 var newScore = allVotes.Sum(v => v.Value);
@@ -244,7 +232,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Postavljanje najboljeg odgovora
         [HttpPost]
         public ActionResult MarkBestAnswer(string questionId, string answerId)
         {
@@ -294,7 +281,6 @@ namespace StackOverflowService.Controllers
         [HttpPost]
         public JsonResult DeleteQuestion(string rowKey)
         {
-            
             try
             {
                 QuestionRepository repo = new QuestionRepository();
@@ -314,32 +300,25 @@ namespace StackOverflowService.Controllers
         {
             try
             {
-                // 1. Nađi postojeće pitanje
                 var question = questionRepo.GetQuestionByRowKey(rowKey);
                 if (question == null)
                 {
                     return Json(new { success = false, message = "Question not found." });
                 }
 
-                // 2. Izmeni polja
                 question.Title = title;
                 question.Description = description;
 
-                // 3. Obradi sliku
                 if (problemImage != null && problemImage.ContentLength > 0)
                 {
-                    // Upload nove slike → pregazi staru
                     string imageUrl = UploadImage(problemImage, "question-" + rowKey);
                     question.ProblemPictureUrl = imageUrl;
                 }
                 else if (removeImage == true)
                 {
-                    // Ako je označeno uklanjanje slike
                     question.ProblemPictureUrl = null;
                 }
-                // ako nije poslata nova slika niti remove → ostaje stara
 
-                // 4. Snimi izmenu
                 questionRepo.UpdateQuestion(question);
 
                 return Json(new { success = true, message = "Question updated successfully!", data = question });
@@ -350,7 +329,6 @@ namespace StackOverflowService.Controllers
             }
         }
 
-        //Postavljanje slika za pitanje
         private string UploadImage(HttpPostedFileBase file, string fileName)
         {
             try
