@@ -122,9 +122,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\QueueHelper.cs" />
     <Compile Include="Models\AlertEmails.cs" />
     <Compile Include="Models\Answer.cs" />
     <Compile Include="Models\NotificationsLog.cs" />
+    <Compile Include="Models\NotificationMessage.cs" />
     <Compile Include="Models\HealthCheck.cs" />
     <Compile Include="Models\Vote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

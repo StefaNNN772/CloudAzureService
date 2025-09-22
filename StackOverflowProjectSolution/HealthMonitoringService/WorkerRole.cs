@@ -12,6 +12,7 @@ using HealthMonitoringService.UniversalConnector;
 using HealthMonitoringContracts;
 using DatabaseRepository.Repositories;
 using DatabaseRepository.Models;
+using DatabaseRepository.Helpers;
 using NotificationContracts;
 using System.ServiceModel;
 
@@ -203,7 +204,13 @@ namespace HealthMonitoringService
                         string message = $"not_ok - {ex.Message}";
                         Trace.TraceError(message);
 
-                        await sendEmailsProxy.SendEmailsAsync(emailsString, message);
+                        // Send health alert message to queue instead of direct service call
+                        var queueHelper = new QueueHelper("HealthCheckConnectionString");
+                        var alertMessage = new NotificationMessage("", "HealthAlert")
+                        {
+                            AdditionalData = message
+                        };
+                        await queueHelper.SendMessageAsync("health-alerts", Newtonsoft.Json.JsonConvert.SerializeObject(alertMessage));
                         
                     }
 
