@@ -20,6 +20,7 @@ namespace StackOverflowService.Controllers
         private QuestionRepository questionRepo = new QuestionRepository();
         private AnswerRepository answerRepo = new AnswerRepository();
         private VoteRepository voteRepo = new VoteRepository();
+        private NotificationsLogRepository notificationsLogRepository = new NotificationsLogRepository();
 
         QuestionRepository repo = new QuestionRepository();
         public ActionResult MyQuestions()

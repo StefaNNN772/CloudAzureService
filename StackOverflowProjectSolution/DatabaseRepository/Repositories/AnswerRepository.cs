@@ -34,5 +34,21 @@ namespace DatabaseRepository.Repositories
             TableOperation insertOperation = TableOperation.Insert(answer);
             _table.Execute(insertOperation);
         }
+
+        public Answer GetAnswerById(string rowKey)
+        {
+            var result = (from a in _table.CreateQuery<Answer>()
+                          where a.PartitionKey == "Answer" && a.RowKey == rowKey
+                          select a).FirstOrDefault();
+            return result;
+        }
+
+        public List<Answer> GetAnswersByQuestionId(string questionId)
+        {
+            var results = (from a in _table.CreateQuery<Answer>()
+                           where a.PartitionKey == "Answer" && a.QuestionId == questionId
+                           select a).ToList();
+            return results;
+        }
     }
 }
